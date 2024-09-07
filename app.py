@@ -50,16 +50,19 @@ def upload():
             
             database.session.add(new_content)
             database.session.commit()
-            return "Content uploaded successfully!"
+            return render_template("index.html")
+
         else:
             return 'no content found'
     return render_template("index.html")
+
+is_received_clicked = 0
 
 @app.route("/receive",methods = ['POST','GET'])
 def receive():
     content_object = database.session.execute(database.select(Content)).scalars().all()[-1]
     print(content_object.content)
-    return render_template("index.html",render_content = content_object.content)
+    return render_template("index.html",render_content = content_object.content, is_received_clicked = is_received_clicked)
 
 
 if __name__ == "__main__":
