@@ -46,6 +46,7 @@
 }
 
 .modal_drag_drop {
+  z-index: 50;
   display: none;
   position: absolute;
   top: 10%;
@@ -196,7 +197,6 @@
 
   /* modal code */
   .modal_drag_drop {
-    opacity: 0;
     position: fixed;
     top: 10%;
     left: 5%;
