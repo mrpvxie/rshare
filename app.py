@@ -28,6 +28,7 @@ with app.app_context():
 
 @app.route("/")
 def index():
+    print("--------------index route is running---------")
     return render_template("index.html")
 
 @app.route("/upload",methods = ['POST','GET'])
