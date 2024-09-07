@@ -3,11 +3,11 @@ const open_modal_button = document.querySelector("#document_button1");
 const modal_cross = document.querySelector(".modal_cross");
 
 modal_cross.addEventListener("click", () => {
-  modal.style.opacity = "0";
+  modal.style.display = "none";
 });
 
 open_modal_button.addEventListener("click", () => {
-  modal.style.opacity = "1";
+  modal.style.display = "block";
 });
 
 const upload_button = document.querySelector(".upload_button");
