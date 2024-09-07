@@ -15,7 +15,7 @@ const receive_button = document.querySelector(".receive_button");
 const upload_document2 = document.querySelector("#document_button2");
 
 upload_document2.addEventListener("click", () => {
-  modal.style.opacity = "1";
+  modal.style.display = "block";
 });
 window.addEventListener("scroll", () => {
   let y_scroll = window.pageYOffset;
