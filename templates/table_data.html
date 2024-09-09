@@ -62,7 +62,7 @@
 
                 <td data-label="content" class="content_column table_content"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
                     
-                        <a href = "{{ url_for('full_content',content_id = cont.id) }}">{{ cont.content[:80]|safe }}</a>  
+                        <a href = "{{ url_for('full_content',content_id = cont.id) }}"><br>{{ cont.content[:80]|safe }}</a>  
                     
                 </a></td>
                 <td data-label="time" class="table_time">{{ cont.time }}</td>   
@@ -95,7 +95,7 @@
 
                 <td data-label="content" class="content_column table_content"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
                     
-                        <a href = "{{ url_for('full_content',content_id = cont.id) }}">{{ cont.content[:15]|safe }}</a>
+                        <a href = "{{ url_for('full_content',content_id = cont.id) }}"><br>{{ cont.content[:15]|safe }}</a>
                     
                 </a></td>
                 <td data-label="time" class="table_time">{{ cont.time }}</td>
