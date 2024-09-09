@@ -66,9 +66,10 @@ def receive():
 
 @app.route("/table_data",methods = ['POST','GET'])
 def table_data():
-    content_object = database.session.execute(database.select(Content)).scalars().all()[-1]
-    print(content_object.content)
-    return render_template("table_data.html",render_content = content_object.content)
+    print("--------------table_data route is running---------")
+    
+    contents = database.session.execute(database.select(Content)).scalars().all()
+    return render_template("table_data.html", data = contents)
 
 @app.route("/full_content",methods = ['POST','GET'])
 def full_content():

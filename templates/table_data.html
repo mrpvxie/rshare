@@ -22,17 +22,17 @@
             </tr>
           </thead>
           <tbody>
+            {% for cont in data %}
             <tr>
-              <td data-label="id">0001</td>
-              <td data-label="content">
-                <!-- content-->
-              </td>
+              <td data-label="id">{{ cont.id }}</td>
+              <td data-label="content">{{ cont.content[:50]|safe }}</td>
               <td data-label="delete_row">
                 <div class="icon_container">
                   <img src="../static/images/delete.png" class="delete_icon" />
                 </div>
               </td>
             </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
