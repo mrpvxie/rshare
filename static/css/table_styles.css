@@ -1,0 +1,126 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+body {
+  background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.container {
+  height: 100%;
+  max-width: 100vw;
+  width: 100%;
+  height: 100vh;
+  background: #fff;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.5);
+}
+.container h2 {
+  padding: 2rem 1rem;
+  text-align: center;
+  font-size: 2.5rem;
+}
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+}
+.tbl thead {
+  background: #007bff;
+  color: #fff;
+}
+.tbl thead tr th {
+  font-size: 0.9rem;
+  padding: 0.8rem;
+  letter-spacing: 0.2rem;
+  border: 1px solid #aab7b8;
+}
+.tbl tbody tr td {
+  font-size: 1rem;
+  letter-spacing: 0.2rem;
+  font-weight: normal;
+  text-align: center;
+  border: 1px solid #aab7b8;
+  padding: 0.8rem;
+}
+.tbl tr:nth-child(even) {
+  background: #ccc;
+  transition: all 0.3s ease-in;
+  cursor: pointer;
+}
+.tbl td {
+  background: #fff;
+  color: #000000;
+  transition: all 0.3s ease-in;
+  cursor: pointer;
+}
+.tbl button {
+  display: inline-block;
+  border: none;
+  margin: 0 auto;
+  padding: 0.4rem;
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+}
+
+.btn_edit {
+  background: #1e8449;
+}
+
+/* .delete_row img {
+  width: 4%;
+  aspect-ratio: 1/1;
+} */
+
+.delete_icon {
+  width: 2%;
+  aspect-ratio: 1/1;
+}
+
+.icon_container {
+  margin: 2px;
+}
+
+.delete_row:hover {
+  background: rgb(252, 118, 118);
+}
+
+@media (max-width: 768px) {
+  .tbl thead {
+    display: none;
+  }
+  .tbl tr,
+  .tbl td {
+    display: block;
+    width: 100%;
+  }
+  .tbl tr {
+    margin-bottom: 1rem;
+  }
+  .tbl tbody tr td {
+    text-align: right;
+    position: relative;
+    transition: all 0.2s ease-in;
+  }
+  .tbl td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 1.2rem;
+    text-align: left;
+  }
+  .tbl tbody tr {
+    background: #fff;
+    color: #000;
+  }
+  .tbl_content {
+    padding: 1rem;
+  }
+}

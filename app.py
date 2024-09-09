@@ -63,5 +63,18 @@ def receive():
     return render_template("index.html",render_content = content_object.content)
 
 
+
+@app.route("/table_data",methods = ['POST','GET'])
+def table_data():
+    content_object = database.session.execute(database.select(Content)).scalars().all()[-1]
+    print(content_object.content)
+    return render_template("table_data.html",render_content = content_object.content)
+
+@app.route("/full_content",methods = ['POST','GET'])
+def full_content():
+    content_object = database.session.execute(database.select(Content)).scalars().all()[-1]
+    print(content_object.content)
+    return render_template("full_content.html",render_content = content_object.content)
+
 if __name__ == "__main__":
     app.run(debug=True)

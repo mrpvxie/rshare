@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Responsive Table Using HTML and CSS</title>
+    <link rel="stylesheet" href="css/style.css" />
+
+    <link rel="stylesheet" href="../static/css/table_styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="tbl_content">
+        <h2>ALL CONTENT</h2>
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>CONTENT</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="id">0001</td>
+              <td data-label="content">
+                <!-- content-->
+              </td>
+              <td data-label="delete_row">
+                <div class="icon_container">
+                  <img src="../static/images/delete.png" class="delete_icon" />
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
