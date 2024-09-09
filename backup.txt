@@ -15,8 +15,11 @@
   <body>
     <div class="container">
       <div class="tbl_content">
-        <div class="search-container">
+        <div class="search-container  ">
           <input type="text"  class = "search_input" placeholder="Search..." />
+          <button>
+            <i class="fas fa-search"></i>
+          </button>
         </div>
 
         <table class="tbl">
