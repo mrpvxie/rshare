@@ -223,7 +223,7 @@ body {
 /* Responsive Adjustments */
 @media screen and (max-width: 600px) {
   .container {
-    width: none;
+    width: 1440px;
   }
   .modal-content {
     width: 80%; /* Adjust width for smaller screens */
