@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request,url_for,redirect
+from flask import Flask, render_template,request,url_for,redirect,jsonify
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 from sqlalchemy import Integer,String,Float
@@ -72,7 +72,15 @@ def table_data():
     global current_page
     current_page = "index"
     contents = database.session.execute(database.select(Content)).scalars().all()
-    return render_template("table_data.html", data = contents)
+    content_data = Content.query.all()
+    json_data = [
+        {
+            'id': content.id,
+            'content': content.content,
+            'time': content.time  
+        } for content in content_data
+    ]
+    return render_template("table_data.html", data = contents,json_data = json_data)
 
 @app.route("/full_content/<int:content_id>",methods = ['POST','GET'])
 def full_content(content_id):
@@ -95,6 +103,22 @@ def delete_content(content_id):
     database.session.commit()
     contents = database.session.execute(database.select(Content)).scalars().all()
     return render_template("table_data.html", data = contents)
+
+
+@app.route('/get_json_data', methods=['GET'])
+def get_data():
+    print("--------------get_data route is running---------")
+    
+    contents = Content.query.all()
+    data = [
+        {
+            'id': content.id,
+            'content': content.content,
+            'time': content.time  # Convert datetime to ISO format
+        } for content in contents
+    ]
+    
+    return jsonify(data)
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0', port=5000)

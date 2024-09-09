@@ -17,6 +17,16 @@ a:hover {
 .back_button_image {
   display: none;
 }
+
+.back_button_image {
+  display: block;
+  position: fixed;
+  height: 60px;
+  aspect-ratio: 1/1;
+  top: 92%;
+  right: 1%;
+}
+
 @media (max-width: 1350px) {
   .back_button_image {
     display: block;
@@ -28,6 +38,3 @@ a:hover {
     position: fixed;
   }
 }
-
-
-
