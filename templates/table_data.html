@@ -4,9 +4,12 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Responsive Table Using HTML and CSS</title>
-    <link rel="stylesheet" href="css/style.css" />
-
+    <title>ALL CONTENT</title>
+    <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    />
     <link rel="stylesheet" href="../static/css/table_styles.css" />
   </head>
   <body>
@@ -18,24 +21,109 @@
             <tr>
               <th>ID</th>
               <th>CONTENT</th>
+              <th>DATE</th>
               <th>ACTION</th>
             </tr>
           </thead>
-          <tbody>
-            {% for cont in data %}
-            <tr>
-              <td data-label="id">{{ cont.id }}</td>
-              <td data-label="content">{{ cont.content[:50]|safe }}</td>
-              <td data-label="delete_row">
-                <div class="icon_container">
-                  <img src="../static/images/delete.png" class="delete_icon" />
-                </div>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
+          <tbody class="table_body"></tbody>
         </table>
+        <a href="{{ url_for('back_button') }} "
+          ><img
+            src="../static/images/back_button.png"
+            class="back_button_image"
+        /></a>
       </div>
     </div>
+
+    <script>
+      const body = document.querySelector("body").getBoundingClientRect().width;
+
+      const table_row_container = document.querySelector(".table_body");
+      if (body > 500) {
+        table_row_container.innerHTML = `
+        {% for cont in data %}
+            <tr>
+                    <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <p>Are you sure you want to delete this item?</p>
+                            <div class="modal-buttons">
+                                <a href="{{url_for('delete_content', content_id= cont.id)}}" class ="delete_yes_button">
+                                    <button class="btn-yes">Yes</button>
+                                </a>
+                                <button class="btn-no">No</button>
+                            </div>
+                        </div>
+                    </div>
+                <td data-label="id">{{ cont.id }}</td>
+
+                <td data-label="content" class="content_column"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
+                    
+                        <a href = "{{ url_for('full_content',content_id = cont.id) }}">{{ cont.content[:80]|safe }}</a>
+                    
+                </a></td>
+                <td data-label="time">{{ cont.time }}</td>
+
+                <td id="deleteBtn{{ cont.id }}">
+
+                        <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                </td>
+            </tr>
+        {% endfor %}`;
+      } else {
+        table_row_container.innerHTML = `
+        {% for cont in data %}
+            <tr>
+                    <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
+                        <div class="modal-content">
+                            <span class="close">&times;</span>
+                            <p>Are you sure you want to delete this item?</p>
+                            <div class="modal-buttons">
+                                <a href="{{url_for('delete_content', content_id= cont.id)}}" >
+                                    <button class="btn-yes">Yes</button>
+                                </a>
+                                <button class="btn-no">No</button>
+                            </div>
+                        </div>
+                    </div>
+                <td data-label="id">{{ cont.id }}</td>
+
+                <td data-label="content" class="content_column"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
+                    
+                        <a href = "{{ url_for('full_content',content_id = cont.id) }}">{{ cont.content[:15]|safe }}</a>
+                    
+                </a></td>
+                <td data-label="time">{{ cont.time }}</td>
+
+                <td id="deleteBtn{{ cont.id }}">
+                    <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
+                        <i class="fa fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        {% endfor %}`;
+      }
+
+      const all_delete_buttons = document.querySelectorAll(".delete_button");
+      all_delete_buttons.forEach((currentItem) => {
+        currentItem.addEventListener("click", () => {
+          const selected_modal = currentItem.getAttribute("data-label");
+          const modal_to_select = document.getElementById(`${selected_modal}`);
+          const no_button = modal_to_select.querySelector(".btn-no");
+          const cross_button = modal_to_select.querySelector(".close");
+
+          modal_to_select.style.display = "block";
+
+          no_button.addEventListener("click", () => {
+            modal_to_select.style.display = "none";
+          });
+          cross_button.addEventListener("click", () => {
+            modal_to_select.style.display = "none";
+          });
+        });
+      });
+    </script>
   </body>
 </html>

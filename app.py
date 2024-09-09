@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request
+from flask import Flask, render_template,request,url_for,redirect
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 from sqlalchemy import Integer,String,Float
@@ -17,6 +17,8 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
 
 database.init_app(app)
+
+current_page = None
 
 class Content(database.Model):
     id : Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -53,7 +55,7 @@ def upload():
             return render_template("index.html")
 
         else:
-            return 'no content found'
+            return render_template("index.html")
     return render_template("index.html")
 
 @app.route("/receive",methods = ['POST','GET'])
@@ -67,15 +69,32 @@ def receive():
 @app.route("/table_data",methods = ['POST','GET'])
 def table_data():
     print("--------------table_data route is running---------")
-    
+    global current_page
+    current_page = "index"
     contents = database.session.execute(database.select(Content)).scalars().all()
     return render_template("table_data.html", data = contents)
 
-@app.route("/full_content",methods = ['POST','GET'])
-def full_content():
-    content_object = database.session.execute(database.select(Content)).scalars().all()[-1]
-    print(content_object.content)
-    return render_template("full_content.html",render_content = content_object.content)
+@app.route("/full_content/<int:content_id>",methods = ['POST','GET'])
+def full_content(content_id):
+    global current_page
+    current_page = "table_data"
+    chosen_content = database.session.execute(database.select(Content).where(Content.id == content_id)).scalar()
+    return render_template("full_content.html",content_data = chosen_content.content)
+
+
+@app.route("/back")
+def back_button():
+    print("--------------back_button route is running---------")
+    return redirect(url_for(current_page))
+
+@app.route("/delete_content/<int:content_id>")
+def delete_content(content_id):
+    print("--------------delete_content route is running---------")
+    content_to_delete = database.get_or_404(Content,content_id)
+    database.session.delete(content_to_delete)
+    database.session.commit()
+    contents = database.session.execute(database.select(Content)).scalars().all()
+    return render_template("table_data.html", data = contents)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,host='0.0.0.0', port=5000)

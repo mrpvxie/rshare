@@ -1,0 +1,33 @@
+.full_content_container {
+  background: white;
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: default;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+.back_button_image {
+  display: none;
+}
+@media (max-width: 1350px) {
+  .back_button_image {
+    display: block;
+    height: 55px;
+    aspect-ratio: 1/1;
+    z-index: 10;
+    right: 3%;
+    top: 90%;
+    position: fixed;
+  }
+}
+
+
+

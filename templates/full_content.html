@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALL CONTENT</title>
+    <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
+
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../static/css/content_styles.css" />
+  </head>
+  <body>
+    <div class="full_content_container"><p>{{content_data|safe}}</p></div>
+    <a href="{{ url_for('back_button') }} "
+      ><img src="../static/images/back_button.png" class="back_button_image"
+    /></a>
+  </body>
+</html>
