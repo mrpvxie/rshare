@@ -131,9 +131,6 @@ body {
     background: #aad1fa;
     color: #000;
   }
-  .tbl_content {
-    padding: 1rem;
-  }
   .back_button_image {
     display: block;
     height: 55px;
@@ -225,6 +222,9 @@ body {
 
 /* Responsive Adjustments */
 @media screen and (max-width: 600px) {
+  .container {
+    width: none;
+  }
   .modal-content {
     width: 80%; /* Adjust width for smaller screens */
   }
