@@ -18,7 +18,27 @@
     <link rel="stylesheet" href="../static/css/styles.css" />
   </head>
   <body>
-    <div class="top">R <a href="{{ url_for('table_data') }} ">SHARE</a></div>
+    <div class="top">
+      R
+      <span id="share_button">SHARE</span>
+    </div>
+
+    <div id="password_modal" class="pass_modal" style="display: none">
+      <div class="modal-content">
+        <span class="pass_close">&times;</span>
+        <p>Enter password to continue:</p>
+        <div class="modal-input">
+          <input
+            type="password"
+            id="password"
+            class="toggling_password"
+            placeholder="Enter your password"
+          />
+        </div>
+        <span class="toggle-password">👁️</span>
+        <div class="modal-buttons"></div>
+      </div>
+    </div>
 
     <div class="all_container">
       <form class="right" method="POST" action="{{ url_for('upload') }}">
@@ -70,6 +90,49 @@
       $(document).ready(function () {
         var content = `{{render_content|safe}}`;
         $("#summernote1").summernote("code", content);
+      });
+      const share_button = document.querySelector("#share_button");
+      const pass_modal = document.querySelector("#password_modal");
+      const cross = document.querySelector(".pass_close");
+      const password_input = document.getElementById("password");
+      const toggle_password = document.querySelector(".toggle-password");
+      const modal_button_container = document.querySelector(".modal-buttons");
+
+      let toggle_count = 1;
+
+      toggle_password.addEventListener("click", () => {
+        if (password_input.type === "password") {
+          password_input.type = "text";
+          toggle_password.textContent = "🙈";
+        } else {
+          password_input.type = "password";
+          toggle_password.textContent = "👁️";
+        }
+      });
+
+      share_button.addEventListener("click", () => {
+        pass_modal.style.display = "block";
+      });
+
+      cross.addEventListener("click", () => {
+        pass_modal.style.display = "none";
+        password_input.value = "";
+        modal_button_container.innerHTML = "";
+      });
+
+      // PASSWORD SECTION
+
+      password_input.addEventListener("keydown", () => {
+        if (password_input.value == "99COEPcoep!") {
+          console.log("this is here");
+          modal_button_container.innerHTML = `
+    <a href="{{ url_for('table_data') }} "
+            ><button class="btn-continue">Continue</button>
+          </a>
+    `;
+        } else {
+          modal_button_container.innerHTML = " ";
+        }
       });
     </script>
   </body>

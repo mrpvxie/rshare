@@ -7,7 +7,6 @@ modal_cross.addEventListener("click", () => {
 });
 
 open_modal_button.addEventListener("click", () => {
-  console.log("open modal is clicked");
   modal.style.display = "block";
 });
 
@@ -16,7 +15,6 @@ const receive_button = document.querySelector(".receive_button");
 const upload_document2 = document.querySelector("#document_button2");
 
 upload_document2.addEventListener("click", () => {
-  console.log("this is clicked");
   modal.style.display = "block";
 });
 window.addEventListener("scroll", () => {
@@ -77,5 +75,3 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 });
-
-
