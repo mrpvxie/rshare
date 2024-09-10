@@ -26,9 +26,7 @@ function insert_data(data_array) {
                             <span class="close">&times;</span>
                             <p>Are you sure you want to delete this item?</p>
                             <div class="modal-buttons">
-                                <a href="{url_for("delete_content",(content_id = ${currentItem.id}))}" class ="delete_yes_button">
-                                    <button class="btn-yes">Yes</button>
-                                </a>
+                                <button class="btn-yes">Yes</button>
                                 <button class="btn-no">No</button>
                             </div>
                         </div>
@@ -36,10 +34,7 @@ function insert_data(data_array) {
                 <td data-label="id" class="table_id">${currentItem.id}</td>  
 
                 <td data-label="content" class="content_column table_content">
-                    <a href="{url_for(
-                      "full_content",
-                      (content_id = ${currentItem.id})
-                    )}">${currentItem.content}</a>  
+                    ${currentItem.content}  
                 </td>
                 <td data-label="time" class="table_time">${currentItem.time}</td>   
 

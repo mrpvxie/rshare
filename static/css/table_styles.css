@@ -265,6 +265,7 @@ body {
   background: white;
   z-index: 50;
   top: 92%;
+  left: 2%;
   position: fixed;
   display: flex;
   align-items: center;
@@ -273,7 +274,6 @@ body {
   border: 2px solid #007bff;
   border-radius: 50px;
   padding: 10px 20px;
-  background-color: white;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
 }
 
@@ -322,4 +322,8 @@ body {
   .search-container input {
     font-size: 12px;
   }
+}
+
+.table_row {
+  background: #dad9d9;
 }
