@@ -123,8 +123,8 @@
       // PASSWORD SECTION
 
       password_input.addEventListener("keydown", () => {
-        if (password_input.value == "99COEPcoep!") {
-          console.log("this is here");
+        if (password_input.value == "123") {
+          toggle_password.textContent = "";
           modal_button_container.innerHTML = `
     <a href="{{ url_for('table_data') }} "
             ><button class="btn-continue">Continue</button>
@@ -132,6 +132,7 @@
     `;
         } else {
           modal_button_container.innerHTML = " ";
+          toggle_password.textContent = "🙈";
         }
       });
     </script>
