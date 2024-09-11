@@ -61,7 +61,7 @@
                 >
               </td>
               <td data-label="time" class="table_time">
-                <span class="content_text">{{ cont.time }}</span>
+                <span class="content_text"><br />{{ cont.time }}</span>
               </td>
 
               <td id="deleteBtn{{ cont.id }}" class="table_delete">
@@ -71,6 +71,14 @@
                 >
                   <i class="fa fa-trash"></i>
                 </button>
+                <a href="{{url_for('small_upload', content_id= cont.id)}}">
+                  <button class="small_upload_button">
+                    <img
+                      src="../static/images/table_upload.png"
+                      id="table_upload_image"
+                    />
+                  </button>
+                </a>
               </td>
             </tr>
             {% endfor %}

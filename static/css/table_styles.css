@@ -331,3 +331,16 @@ body {
 .table_row {
   background: #dad9d9;
 }
+
+.table_delete {
+  display: flex;
+  justify-content: space-around;
+}
+
+.small_upload_button {
+  background: transparent;
+}
+
+#table_upload_image {
+  height: 30px;
+}

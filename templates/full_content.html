@@ -19,13 +19,24 @@
   </head>
   <body>
     
-      <form class="full_content_form" method="POST" action="{{url_for('receive')}}">
+      <form class="full_content_form" method="POST" action="{{url_for('edit_content',content_id=content_data.id)}}">
         <textarea id="summernote2" name="summernote2"></textarea>
         <button type="submit" class="submit edit_button1">SAVE CHANGES</button>
+        <button type="submit" class="submit edit_button2"><img src="../static/images/save.png" class ="save_change_button" ></button>
       </form>
     </div>
-  
-        <button type="submit" class="submit edit_button2"><img src="../static/images/save.png" class ="save_change_button" alt=""></button>
+      <a href="{{url_for('small_upload', content_id= content_data.id)}}" class = "small_upload_pc">
+            <button class="submit upload_button_full_content">UPLOAD</button>
+      </a>
+
+      <a href="{{url_for('small_upload', content_id= content_data.id)}}" class = "small_upload_phone">
+            <button class="submit upload_button_full_content"><img src="../static/images/upload_up_arrow.png" class ="up_arrow"></button>
+      </a>
+
+     
+      <a href="{{ url_for('back_button') }} ">
+        <img src="../static/images/back_button.png" class="back_button_image_full_content"/>
+      </a>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
@@ -34,38 +45,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
     <script>
       $(document).ready(function () {
-        var content = `{{content_data|safe}}`;
+        var content = `{{content_data.content |safe}}`;
         $("#summernote2").summernote("code", content);
       });
-      
       let fixed_height = 750;
-
-      const body_width = document.querySelector("body").getBoundingClientRect().width;
-
-      if (body_width < 400) {
-        fixed_height = 555;
-        upload_button.textContent = "";
-        receive_button.textContent = "";
-        upload_button.innerHTML = `<img src="../static/images/upload_up_arrow.png" class ="up_arrow" alt="">`; //here
-        receive_button.innerHTML = `<img src="../static/images/receive_down_arrow.png" class ="down_arrow" alt="">`; //here
-        upload_document2.textContent = "";
-        upload_document2.classList.remove("send_doc");
-        upload_document2.classList.add("bg_transparent");
-        upload_document2.innerHTML = `<img src="../static/images/upload_file.png" class="upload_file">`; //here
-      }
-
       document.addEventListener("DOMContentLoaded", function () {
-        var summernote1 = document.getElementById("summernote1");
         var summernote2 = document.getElementById("summernote2");
-
-        if (summernote1) {
-          $(summernote1).summernote({
-            placeholder: "UPLOAD...",
-            minHeight: fixed_height,
-            maxHeight: fixed_height,
-          });
-        }
-
         if (summernote2) {
           $(summernote2).summernote({
             placeholder: "RECEIVE...",
