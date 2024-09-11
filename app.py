@@ -14,7 +14,7 @@ def remove_tags(text):
     clean_text = re.sub(r'\s+', ' ', clean_text).strip()
     return clean_text
 
-#Tables
+
 class Base(DeclarativeBase):
     pass
 
@@ -30,6 +30,8 @@ database.init_app(app)
 #GLOBAL VARIABLES
 current_page = None
 small_upload_button_page = None
+
+#TABLES 
 
 class Content(database.Model):
     id : Mapped[int] = mapped_column(Integer, primary_key=True)
