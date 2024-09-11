@@ -1,23 +1,80 @@
-<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ALL CONTENT</title>
+    <title>RSHARE</title>
     <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
 
-    <link rel="stylesheet" href="css/style.css" />
     <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
     />
-    <link rel="stylesheet" href="../static/css/content_styles.css" />
+
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.css"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="../static/css/styles.css" />
   </head>
   <body>
-    <div class="full_content_container"><p>{{content_data|safe}}</p></div>
-    <a href="{{ url_for('back_button') }} "
-      ><img src="../static/images/back_button.png" class="back_button_image"
-    /></a>
+    
+      <form class="full_content_form" method="POST" action="{{url_for('receive')}}">
+        <textarea id="summernote2" name="summernote2"></textarea>
+        <button type="submit" class="submit edit_button1">SAVE CHANGES</button>
+      </form>
+    </div>
+  
+        <button type="submit" class="submit edit_button2"><img src="../static/images/save.png" class ="save_change_button" alt=""></button>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var content = `{{content_data|safe}}`;
+        $("#summernote2").summernote("code", content);
+      });
+      
+      let fixed_height = 750;
+
+      const body_width = document.querySelector("body").getBoundingClientRect().width;
+
+      if (body_width < 400) {
+        fixed_height = 555;
+        upload_button.textContent = "";
+        receive_button.textContent = "";
+        upload_button.innerHTML = `<img src="../static/images/upload_up_arrow.png" class ="up_arrow" alt="">`; //here
+        receive_button.innerHTML = `<img src="../static/images/receive_down_arrow.png" class ="down_arrow" alt="">`; //here
+        upload_document2.textContent = "";
+        upload_document2.classList.remove("send_doc");
+        upload_document2.classList.add("bg_transparent");
+        upload_document2.innerHTML = `<img src="../static/images/upload_file.png" class="upload_file">`; //here
+      }
+
+      document.addEventListener("DOMContentLoaded", function () {
+        var summernote1 = document.getElementById("summernote1");
+        var summernote2 = document.getElementById("summernote2");
+
+        if (summernote1) {
+          $(summernote1).summernote({
+            placeholder: "UPLOAD...",
+            minHeight: fixed_height,
+            maxHeight: fixed_height,
+          });
+        }
+
+        if (summernote2) {
+          $(summernote2).summernote({
+            placeholder: "RECEIVE...",
+            minHeight: fixed_height,
+            maxHeight: fixed_height,
+          });
+        }
+      });
+    </script>
   </body>
 </html>
+

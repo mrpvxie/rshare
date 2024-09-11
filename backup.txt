@@ -1,138 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ALL CONTENT</title>
-    <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-    />
-    <link rel="stylesheet" href="../static/css/table_styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="tbl_content">
-        <div class="search-container  ">
-          <input type="text"  class = "search_input" placeholder="Search..." />
-          <button>
-            <i class="fas fa-search"></i>
-          </button>
-        </div>
+let content_data = [];
 
-        <table class="tbl">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>CONTENT</th>
-              <th>DATE</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody class="table_body"></tbody>
-        </table>
-        <a href="{{ url_for('back_button') }} "
-          ><img
-            src="../static/images/back_button.png"
-            class="back_button_image"
-        /></a>
-      </div>
-    </div>
+let count = 0;
+let id = document.querySelectorAll(".table_id");
+let content = document.querySelectorAll(".table_content");
+let time = document.querySelectorAll(".table_time");
 
-    <script>
-      const body = document.querySelector("body").getBoundingClientRect().width;
+id.forEach(() => {
+  content_data.push({
+    id: id[count].textContent.trim(),
+    content: content[count].textContent.trim(),
+    time: time[count].textContent.trim(),
+  });
+  count++;
+});
 
-      const table_row_container = document.querySelector(".table_body");
-      if (body > 500) {
-        table_row_container.innerHTML = `
-        {% for cont in data %}
-            <tr>
-                    <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
+console.log(content_data);
+
+function insert_data(data_array) {
+  const table_row_data = document.querySelector(".table_body");
+  const row_data = data_array
+    .map((currentItem) => {
+      return `<tr>
+                    <div id="modal_no_${currentItem.id}" class="modal" style="display:none">
                         <div class="modal-content"> 
                             <span class="close">&times;</span>
                             <p>Are you sure you want to delete this item?</p>
                             <div class="modal-buttons">
-                                <a href="{{url_for('delete_content', content_id= cont.id)}}" class ="delete_yes_button">
-                                    <button class="btn-yes">Yes</button>
-                                </a>
+                                <button class="btn-yes">Yes</button>
                                 <button class="btn-no">No</button>
                             </div>
                         </div>
                     </div>
-                <td data-label="id" class = "table_id">{{ cont.id }}</td>  
+                <td data-label="id" class="table_id">${currentItem.id}</td>  
 
-                <td data-label="content" class="content_column table_content"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
-                    
-                        <a href = "{{ url_for('full_content',content_id = cont.id) }}">{{ cont.content[:80]|safe }}</a>  
-                    
-                </a></td>
-                <td data-label="time" class="table_time">{{ cont.time }}</td>   
-
-                <td id="deleteBtn{{ cont.id }}" class="table_delete">  
-
-                        <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
-                            <i class="fa fa-trash"></i>
-                        </button>
+                <td data-label="content" class="content_column table_content">
+                    ${currentItem.content}  
                 </td>
-            </tr>
-        {% endfor %}`;
-      } else {
-        table_row_container.innerHTML = `
-        {% for cont in data %}
-            <tr>
-                    <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <p>Are you sure you want to delete this item?</p>
-                            <div class="modal-buttons">
-                                <a href="{{url_for('delete_content', content_id= cont.id)}}" >
-                                    <button class="btn-yes">Yes</button>
-                                </a>
-                                <button class="btn-no">No</button>
-                            </div>
-                        </div>
-                    </div>
-                <td data-label="id" class = "table_id">{{ cont.id }}</td>
+                <td data-label="time" class="table_time">${currentItem.time}</td>   
 
-                <td data-label="content" class="content_column table_content"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
-                    
-                        <a href = "{{ url_for('full_content',content_id = cont.id) }}">{{ cont.content[:15]|safe }}</a>
-                    
-                </a></td>
-                <td data-label="time" class="table_time">{{ cont.time }}</td>
-
-                <td id="deleteBtn{{ cont.id }}" class= "table_delete">
-                    <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
+                <td id="deleteBtn${currentItem.id}" class="table_delete">  
+                    <button class="btn_trash delete_button" data-label="modal_no_${currentItem.id}">
                         <i class="fa fa-trash"></i>
                     </button>
                 </td>
-            </tr>
-        {% endfor %}`;
-      }
+            </tr>`;
+    })
+    .join(" ");
+  table_row_data.innerHTML = row_data;
+}
 
-      const all_delete_buttons = document.querySelectorAll(".delete_button");
-      all_delete_buttons.forEach((currentItem) => {
-        currentItem.addEventListener("click", () => {
-          const selected_modal = currentItem.getAttribute("data-label");
-          const modal_to_select = document.getElementById(`${selected_modal}`);
-          const no_button = modal_to_select.querySelector(".btn-no");
-          const cross_button = modal_to_select.querySelector(".close");
+const search_input = document.querySelector(".search_input");
 
-          modal_to_select.style.display = "block";
+search_input.addEventListener("input", function () {
+  const searchValue = search_input.value.toLowerCase().trim();
+  if (searchValue === "") {
+    insert_data(content_data);
+    console.log("Showing all data");
+  } else {
+    const filtered_products = content_data.filter(function (currentItem) {
+      return currentItem.content.toLowerCase().includes(searchValue);
+    });
+    if (filtered_products.length === 0) {
+      insert_data([]);
+      console.log("No results found");
+    } else {
+      insert_data(filtered_products);
+    }
 
-          no_button.addEventListener("click", () => {
-            modal_to_select.style.display = "none";
-          });
-          cross_button.addEventListener("click", () => {
-            modal_to_select.style.display = "none";
-          });
-        });
-      });
-
-      
-    </script>
-    <script src="../static/js/table_data.js"></script>
-  </body>
-</html>
+    console.log(filtered_products);
+  }
+});

@@ -28,7 +28,53 @@
               <th>ACTION</th>
             </tr>
           </thead>
-          <tbody class="table_body"></tbody>
+          <tbody class="table_body">
+            {% for cont in data %}
+            <tr>
+              <div
+                id="modal_no_{{ cont.id }}"
+                class="modal"
+                style="display: none"
+              >
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>Are you sure you want to delete this item?</p>
+                  <div class="modal-buttons">
+                    <a
+                      href="{{url_for('delete_content', content_id= cont.id)}}"
+                    >
+                      <button class="btn-yes">Yes</button>
+                    </a>
+                    <button class="btn-no">No</button>
+                  </div>
+                </div>
+              </div>
+              <td data-label="id" class="table_id">
+                <span class="content_text">{{ cont.id }}</span>
+              </td>
+
+              <td data-label="content" class="content_column table_content">
+                <a href="{{ url_for('full_content',content_id = cont.id) }}"
+                  ><br /><span class="content_text"
+                    >{{ cont.content[:100] }}</span
+                  ></a
+                >
+              </td>
+              <td data-label="time" class="table_time">
+                <span class="content_text">{{ cont.time }}</span>
+              </td>
+
+              <td id="deleteBtn{{ cont.id }}" class="table_delete">
+                <button
+                  class="btn_trash delete_button"
+                  data-label="modal_no_{{ cont.id }}"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
         </table>
         <a href="{{ url_for('back_button') }} "
           ><img
@@ -39,94 +85,102 @@
     </div>
 
     <script>
-      const body = document.querySelector("body").getBoundingClientRect().width;
-
       const table_row_container = document.querySelector(".table_body");
-      if (body > 500) {
-        table_row_container.innerHTML = `
-        {% for cont in data %}
-            <tr >
-                <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
-                    <div class="modal-content"> 
-                        <span class="close">&times;</span>
-                        <p>Are you sure you want to delete this item?</p>
-                        <div class="modal-buttons">
-                            <a href="{{url_for('delete_content', content_id= cont.id)}}" class ="delete_yes_button">
-                                <button class="btn-yes">Yes</button>
-                            </a>
-                            <button class="btn-no">No</button>
-                        </div>
-                    </div>
-                </div>
 
-                <td data-label="ID" class="table_id">{{ cont.id }}</td>  
+      function add_delete_event_listner() {
+        const all_delete_buttons = document.querySelectorAll(".delete_button");
+        all_delete_buttons.forEach((currentItem) => {
+          currentItem.addEventListener("click", () => {
+            const selected_modal = currentItem.getAttribute("data-label");
+            const modal_to_select = document.getElementById(
+              `${selected_modal}`
+            );
+            const no_button = modal_to_select.querySelector(".btn-no");
+            const cross_button = modal_to_select.querySelector(".close");
 
-                <td data-label="Content" class="content_column table_content" style="width:80%;">
-                    <a href="{{ url_for('full_content', content_id=cont.id) }}">{{ cont.content[:30]|safe }}</a>  
-                </td>
+            modal_to_select.style.display = "block";
 
-                <td data-label="Date" class="table_time">{{ cont.time }}</td>   
-
-                <td id="deleteBtn{{ cont.id }}" class="table_delete">  
-                    <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}`;
-      } else {
-        table_row_container.innerHTML = `
-        {% for cont in data %}
-            <tr class = "table_row">
-                    <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <p>Are you sure you want to delete this item?</p>
-                            <div class="modal-buttons">
-                                <a href="{{url_for('delete_content', content_id= cont.id)}}" >
-                                    <button class="btn-yes">Yes</button>
-                                </a>
-                                <button class="btn-no">No</button>
-                            </div>
-                        </div>
-                    </div>
-                <td data-label="id" class = "table_id">{{ cont.id }}</td>
-
-                <td data-label="content" class="content_column table_content"><a href = "{{ url_for('full_content',content_id = cont.id) }}">
-                    
-                        <a href = "{{ url_for('full_content',content_id = cont.id) }}"><br>{{ cont.content[:15]|safe }}</a>
-                    
-                </a></td>
-                <td data-label="time" class="table_time">{{ cont.time }}</td>
-
-                <td id="deleteBtn{{ cont.id }}" class= "table_delete">
-                    <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}`;
-      }
-
-      const all_delete_buttons = document.querySelectorAll(".delete_button");
-      all_delete_buttons.forEach((currentItem) => {
-        currentItem.addEventListener("click", () => {
-          const selected_modal = currentItem.getAttribute("data-label");
-          const modal_to_select = document.getElementById(`${selected_modal}`);
-          const no_button = modal_to_select.querySelector(".btn-no");
-          const cross_button = modal_to_select.querySelector(".close");
-
-          modal_to_select.style.display = "block";
-
-          no_button.addEventListener("click", () => {
-            modal_to_select.style.display = "none";
-          });
-          cross_button.addEventListener("click", () => {
-            modal_to_select.style.display = "none";
+            no_button.addEventListener("click", () => {
+              modal_to_select.style.display = "none";
+            });
+            cross_button.addEventListener("click", () => {
+              modal_to_select.style.display = "none";
+            });
           });
         });
+      }
+      add_delete_event_listner();
+      let content_data = [];
+      let count = 0;
+      let id = document.querySelectorAll(".table_id");
+      let content = document.querySelectorAll(".table_content");
+      let time = document.querySelectorAll(".table_time");
+
+      id.forEach(() => {
+        content_data.push({
+          id: id[count].textContent.trim(),
+          content: content[count].textContent.trim(),
+          time: time[count].textContent.trim(),
+        });
+        count++;
+      });
+
+      function insert_data(data_array) {
+        const row_data = data_array
+          .map((currentItem) => {
+            return `
+                  <tr>
+                        <div id="modal_no_${currentItem.id}" class="modal" style="display:none">
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <p>Are you sure you want to delete this item?</p>
+                                <div class="modal-buttons">
+                                    <a href="/delete_content/${currentItem.id}">
+                                        <button class="btn-yes">Yes</button>
+                                    </a>
+                                    <button class="btn-no">No</button>
+                                </div>
+                            </div>
+                        </div>
+                      <td data-label="id" class="table_id"><span class="content_text">${currentItem.id}</span></td>
+
+                      <td data-label="content" class="content_column table_content">
+                        <a href="/full_content/${currentItem.id}">
+                          <br><span class="content_text">${currentItem.content}</span>
+                        </a>
+                      </td>
+                      <td data-label="time" class="table_time"><span class="content_text">${currentItem.time}</span></td>
+
+                      <td id="deleteBtn${currentItem.id}" class="table_delete">
+                          <button class="btn_trash delete_button" data-label="modal_no_${currentItem.id}">
+                              <i class="fa fa-trash"></i>
+                          </button>
+                      </td>
+                  </tr>`;
+          })
+          .join(" ");
+        table_row_container.innerHTML = row_data;
+      }
+
+      const search_input = document.querySelector(".search_input");
+
+      search_input.addEventListener("input", function () {
+        const searchValue = search_input.value.toLowerCase().trim();
+        if (searchValue === "") {
+          insert_data(content_data);
+          add_delete_event_listner();
+        } else {
+          const filtered_products = content_data.filter(function (currentItem) {
+            return currentItem.content.toLowerCase().includes(searchValue);
+          });
+          if (filtered_products.length === 0) {
+            insert_data([]);
+          } else {
+            insert_data(filtered_products);
+            add_delete_event_listner();
+          }
+        }
       });
     </script>
-    <script src="../static/js/table_data.js"></script>
   </body>
 </html>

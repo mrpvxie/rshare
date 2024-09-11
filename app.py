@@ -4,6 +4,14 @@ from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 from sqlalchemy import Integer,String,Float
 
 from datetime import datetime
+import re
+
+#functions
+def remove_tags(text):
+    clean_text = re.sub(r'<.*?>', '', text)
+    clean_text = re.sub(r'&nbsp;|&quot;', ' ', clean_text)
+    clean_text = re.sub(r'\s+', ' ', clean_text).strip()
+    return clean_text
 
 #Tables
 class Base(DeclarativeBase):
@@ -71,16 +79,31 @@ def table_data():
     print("--------------table_data route is running---------")
     global current_page
     current_page = "index"
-    contents = database.session.execute(database.select(Content)).scalars().all()
     content_data = Content.query.all()
     json_data = [
         {
             'id': content.id,
-            'content': content.content,
+            'content': remove_tags(content.content),
             'time': content.time  
         } for content in content_data
     ]
-    return render_template("table_data.html", data = contents,json_data = json_data)
+    return render_template("table_data.html", data = json_data)
+
+@app.route("/delete_content/<int:content_id>")
+def delete_content(content_id):
+    print("--------------delete_content route is running---------")
+    content_to_delete = database.get_or_404(Content,content_id)
+    database.session.delete(content_to_delete)
+    database.session.commit()
+    content_data = Content.query.all()
+    json_data = [
+        {
+            'id': content.id,
+            'content': remove_tags(content.content),
+            'time': content.time  
+        } for content in content_data
+    ]
+    return render_template("table_data.html", data = json_data)
 
 @app.route("/full_content/<int:content_id>",methods = ['POST','GET'])
 def full_content(content_id):
@@ -94,15 +117,6 @@ def full_content(content_id):
 def back_button():
     print("--------------back_button route is running---------")
     return redirect(url_for(current_page))
-
-@app.route("/delete_content/<int:content_id>")
-def delete_content(content_id):
-    print("--------------delete_content route is running---------")
-    content_to_delete = database.get_or_404(Content,content_id)
-    database.session.delete(content_to_delete)
-    database.session.commit()
-    contents = database.session.execute(database.select(Content)).scalars().all()
-    return render_template("table_data.html", data = contents)
 
 
 @app.route('/get_json_data', methods=['GET'])

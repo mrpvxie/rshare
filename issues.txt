@@ -1,0 +1,7 @@
+1. table issue
+2. text link issue
+3. make the text appear in summernote and editable
+4. make pdf also 
+5. file sharing
+
+when just pastes image
