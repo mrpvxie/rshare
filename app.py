@@ -1,11 +1,12 @@
-from flask import Flask, render_template,request,url_for,redirect,jsonify
+from flask import Flask, render_template,request,url_for,redirect,jsonify,abort
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 from sqlalchemy import Integer,String
 
+from functools import wraps
+
 from datetime import datetime
 import re
-import copy
 
 #functions
 def remove_tags(text):
@@ -20,6 +21,7 @@ class Base(DeclarativeBase):
 
 database = SQLAlchemy(model_class = Base)
 
+is_admin = 0
 
 app = Flask(__name__)
 
@@ -41,8 +43,20 @@ class Content(database.Model):
 with app.app_context():
     database.create_all()
 
+def admin_only(function):
+    @wraps(function)
+    def wrapper(*args,**kwargs):
+        print("here")
+        if (not is_admin):
+            return render_template("admin_only.html")   
+        return function(*args,**kwargs)
+    return wrapper    
+    
+
 @app.route("/")
 def index():
+    global is_admin
+    is_admin = 0
     print("--------------index route is running---------")
     return render_template("index.html")
 
@@ -81,7 +95,8 @@ def receive():
 
 
 
-@app.route("/table_data",methods = ['POST','GET'])
+@app.route("/table_data")
+@admin_only
 def table_data():
     print("--------------table_data route is running---------")
     global current_page
@@ -98,7 +113,16 @@ def table_data():
     ]
     return render_template("table_data.html", data = json_data)
 
+
+@app.route("/check_for_admin")
+def check_for_admin():
+    print("--------------check_for_admin route is running---------")
+    global is_admin
+    is_admin = 1
+    return redirect(url_for("table_data")) 
+
 @app.route("/delete_content/<int:content_id>")
+@admin_only
 def delete_content(content_id):
     print("--------------delete_content route is running---------")
     content_to_delete = database.get_or_404(Content,content_id)
@@ -114,7 +138,9 @@ def delete_content(content_id):
     ]
     return render_template("table_data.html", data = json_data)
 
+
 @app.route("/full_content/<int:content_id>",methods = ['POST','GET'])
+@admin_only
 def full_content(content_id):
     print("--------------full_content route is running---------")
     global current_page
@@ -130,8 +156,8 @@ def back_button():
     print("--------------back_button route is running---------")
     return redirect(url_for(current_page))
 
-
 @app.route('/get_json_data', methods=['GET'])
+@admin_only
 def get_data():
     print("--------------get_data route is running---------")
     
@@ -148,6 +174,7 @@ def get_data():
 
 
 @app.route("/Edit/<int:content_id>",methods = ['POST','GET'])
+@admin_only
 def edit_content(content_id):
     print("--------------edit_content route is running---------")
     chosen_content = database.session.execute(database.select(Content).where(Content.id == content_id)).scalar()
@@ -162,6 +189,7 @@ def edit_content(content_id):
     return render_template("full_content.html",content_data = chosen_content)
 
 @app.route("/small_upload/<int:content_id>",methods = ['POST','GET'])
+@admin_only
 def small_upload(content_id):
     global small_upload_button_page
     

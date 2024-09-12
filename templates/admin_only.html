@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Admin Only Access</title>
+    <style>
+      /* General Styles */
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+        font-family: "Arial", sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #e0f7fa;
+      }
+
+      .container {
+        text-align: center;
+        color: #0d47a1;
+      }
+
+      /* Box Style */
+      .box {
+        position: relative;
+        width: 300px;
+        height: 300px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: #bbdefb;
+        border: 2px solid #0d47a1;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+      }
+
+      .box span {
+        font-size: 3rem;
+        font-weight: bold;
+        color: #0d47a1;
+      }
+
+      /* Heading and Text */
+      h1 {
+        font-size: 2rem;
+        color: #0d47a1;
+        margin-top: 20px;
+      }
+
+      p {
+        color: #1976d2;
+        font-size: 1rem;
+        max-width: 500px;
+        margin: 10px auto;
+      }
+
+      /* Button Style */
+      .button {
+        background-color: #0d47a1;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-transform: uppercase;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+      }
+
+      .button:hover {
+        background-color: #1565c0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="box">
+        <span>403</span>
+      </div>
+      <h1>Admins Only Beyond This Point</h1>
+      <p>
+        Sorry, you don't have permission to access this page. Please contact
+        your administrator if you think this is an error.
+      </p>
+      <button class="button" onclick="window.history.back()">Go Back</button>
+    </div>
+  </body>
+</html>
