@@ -6,10 +6,12 @@
   border: 1px solid black;
   color: white;
   background: #007bff;
-  text-align: center;
   font-weight: bold;
   font-size: 2rem;
   height: var(--height_of_top);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
 }
 
 a {
@@ -459,4 +461,21 @@ a:hover {
   position: absolute;
   top: 87%;
   left: 45%;
+}
+
+.credential_button {
+  background: rgb(46, 157, 248);
+  color: white;
+  border-radius: 10px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+}
+
+.credential_button:hover {
+  background: #024996;
+  color: white;
+  transition-duration: 0.5s;
 }

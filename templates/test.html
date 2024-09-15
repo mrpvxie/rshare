@@ -1,132 +1,151 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ALL CONTENT</title>
-    <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-    />
-    <link rel="stylesheet" href="../static/css/table_styles.css" />
-  </head>
-  <body>
-    <div class="container">
-      <div class="tbl_content">
-        <div class="search-container">
-          <input type="text" class="search_input" placeholder="Search..." />
-        </div>
+function togglePassword() { const passwordInput =
+document.getElementById("password"); const passwordToggle =
+document.querySelector(".password-toggle"); if (passwordInput.type ===
+"password") { passwordInput.type = "text"; passwordToggle.textContent = "🙈"; }
+else { passwordInput.type = "password"; passwordToggle.textContent = "👁️"; } }
+function elementVisibility(element, mode) {} async function getUserData() { try
+{ const response = await fetch("/get_json_data_user"); if (!response.ok) { throw
+new Error("Failed to fetch user data"); } const data = await response.json();
+return data; } catch (error) { console.error(error); if (result) {
+result.textContent = "There was an error fetching the data"; } } } function
+input_filter_dynamic( input_element, filtering_list, warning_box_element,
+tick_element ) { input_element.addEventListener("keyup", () => { let
+input_element_value = input_element.value.toLowerCase(); let preexisting_strings
+= filtering_list.filter((currentItem) => { return currentItem.toLowerCase() ===
+input_element_value; }); if (preexisting_strings.length > 0) {
+warning_box_element.style.display = "block"; tick_element.style.display =
+"none"; } else { warning_box_element.style.display = "none"; if
+(input_element_value.length > 3) { tick_element.style.display = "block";
+showRegisterButton(register_button); } else { tick_element.style.display =
+"none"; } } }); } function showRegisterButton(element) { if (
+username_tick.style.display == "block" || email_tick.style.display == "block" ||
+password_warning.style.display == "none" ) { element.style.display = "block"; }
+else { element.style.display = "none"; } } //VARIABLES let input_check = 0; let
+usernames = []; let emails = []; let register_button =
+document.querySelector(".register-button"); let username_warning =
+document.querySelector("#username_warning"); let username_input =
+document.querySelector(".username_input"); let username_tick =
+document.querySelector("#username_tick"); let email_tick =
+document.querySelector("#email_tick"); let email_input =
+document.querySelector(".email_input"); let email_warning =
+document.querySelector("#email_warning"); let password_input =
+document.querySelector(".password_input"); let password_warning =
+document.querySelector("#password_warning"); getUserData().then((userData) => {
+userData.forEach((currentItem) => { usernames.push(currentItem.username);
+emails.push(currentItem.email.replace("@gmail.com", "")); }); });
+password_input.addEventListener("keyup", () => { let
+password_element_value_length = password_input.value.toLowerCase().length; if
+(password_element_value_length < 7) { password_warning.style.display = "block";
+} else { console.log("here"); password_warning.style.display = "none";
+showRegisterButton(register_button); } }); input_filter_dynamic(email_input,
+emails, email_warning, email_tick); input_filter_dynamic( username_input,
+usernames, username_warning, username_tick );
 
-        <table class="tbl">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>CONTENT</th>
-              <th>DATE</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody class="table_body"></tbody>
-        </table>
-        <a href="{{ url_for('back_button') }} "
-          ><img
-            src="../static/images/back_button.png"
-            class="back_button_image"
-        /></a>
-      </div>
-    </div>
 
-    <script>
-      const body = document.querySelector("body").getBoundingClientRect().width;
-
-      const table_row_container = document.querySelector(".table_body");
-      if (body > 500) {
-        table_row_container.innerHTML = `
-        {% for cont in data %} 
-            <tr > <!--here-->
-                <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
-                    <div class="modal-content"> 
-                        <span class="close">&times;</span>
-                        <p>Are you sure you want to delete this item?</p>
-                        <div class="modal-buttons">
-                            <a href="{{url_for('delete_content', content_id= cont.id)}}" class ="delete_yes_button">
-                                <button class="btn-yes">Yes</button>
-                            </a>
-                            <button class="btn-no">No</button>
-                        </div>
-                    </div>
-                </div>
-
-                <td data-label="ID" class="table_id">{{ cont.id }}</td>  
-
-                <td data-label="Content" class="content_column table_content" style="width:80%;"> <!--here-->
-                    <a href="{{ url_for('full_content', content_id=cont.id) }}">{{ cont.content[:150] }}</a> <!--here--> 
-                </td>
-                
-                <td data-label="Date" class="table_time">{{ cont.time }}</td>   
-
-                <td id="deleteBtn{{ cont.id }}" class="table_delete">  
-                    <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}`;
-      } else {
-        table_row_container.innerHTML = `
-        {% for cont in data %}
-            <tr >
-                    <div id="modal_no_{{ cont.id }}" class="modal" style="display:none">
-                        <div class="modal-content">
-                            <span class="close">&times;</span>
-                            <p>Are you sure you want to delete this item?</p>
-                            <div class="modal-buttons">
-                                <a href="{{url_for('delete_content', content_id= cont.id)}}" >
-                                    <button class="btn-yes">Yes</button>
-                                </a>
-                                <button class="btn-no">No</button>
-                            </div>
-                        </div>
-                    </div>
-                <td data-label="id" class = "table_id"><span class ="content_text">{{ cont.id }}</span></td>
-
-                <td data-label="content" class="content_column table_content">
-                    
-                  <a href = "{{ url_for('full_content',content_id = cont.id) }}"><br><span class ="content_text">{{ cont.content[:100] }}</span></a>
-                  
-                </td>
-                <td data-label="time" class="table_time" ><span class ="content_text">{{ cont.time }}</span></td>
-
-                <td id="deleteBtn{{ cont.id }}" class= "table_delete">
-                    <button class="btn_trash delete_button" data-label="modal_no_{{ cont.id }}">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        {% endfor %}`;
+function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const passwordToggle = document.querySelector(".password-toggle");
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          passwordToggle.textContent = "🙈";
+        } else {
+          passwordInput.type = "password";
+          passwordToggle.textContent = "👁️";
+        }
       }
 
-      const all_delete_buttons = document.querySelectorAll(".delete_button");
-      all_delete_buttons.forEach((currentItem) => {
-        currentItem.addEventListener("click", () => {
-          const selected_modal = currentItem.getAttribute("data-label");
-          const modal_to_select = document.getElementById(`${selected_modal}`);
-          const no_button = modal_to_select.querySelector(".btn-no");
-          const cross_button = modal_to_select.querySelector(".close");
+      async function getUserData() {
+        try {
+          const response = await fetch("/get_json_data_user");
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error(error);
+          if (result) {
+            result.textContent = "There was an error fetching the data";
+          }
+        }
+      }
 
-          modal_to_select.style.display = "block";
+      function input_filter_dynamic(
+        input_element,
+        filtering_list,
+        warning_box_element,
+        tick_element
+      ) {
+        input_element.addEventListener("keyup", () => {
+          let input_element_value = input_element.value.toLowerCase();
+          let preexisting_strings = filtering_list.filter((currentItem) => {
+            return currentItem.toLowerCase() === input_element_value;
+          });
+          if (preexisting_strings.length > 0) {
+            warning_box_element.style.display = "block";
+            tick_element.style.display = "none";
+          } else {
+            warning_box_element.style.display = "none";
+            if (input_element_value.length > 3) {
+              tick_element.style.display = "block";
+            } else {
+              tick_element.style.display = "none";
+            }
+          }
+          showRegisterButton(); // Update button visibility
+        });
+      }
 
-          no_button.addEventListener("click", () => {
-            modal_to_select.style.display = "none";
-          });
-          cross_button.addEventListener("click", () => {
-            modal_to_select.style.display = "none";
-          });
+      function showRegisterButton() {
+        const usernameValid = username_tick.style.display === "block";
+        const emailValid = email_tick.style.display === "block";
+        const passwordValid = password_input.value.length >= 5;
+
+        // Only show button if all conditions are met
+        if (usernameValid && emailValid && passwordValid) {
+          register_button.style.display = "block";
+        } else {
+          register_button.style.display = "none";
+        }
+      }
+
+      // VARIABLES
+      let usernames = [];
+      let emails = [];
+      let register_button = document.querySelector(".register-button");
+
+      let username_warning = document.querySelector("#username_warning");
+      let username_input = document.querySelector(".username_input");
+      let username_tick = document.querySelector("#username_tick");
+
+      let email_tick = document.querySelector("#email_tick");
+      let email_input = document.querySelector(".email_input");
+      let email_warning = document.querySelector("#email_warning");
+
+      let password_input = document.querySelector(".password_input");
+      let password_warning = document.querySelector("#password_warning");
+
+      getUserData().then((userData) => {
+        userData.forEach((currentItem) => {
+          usernames.push(currentItem.username);
+          emails.push(currentItem.email);
         });
       });
-    </script>
-    <script src="../static/js/table_data.js"></script>
-  </body>
-</html>
+
+      password_input.addEventListener("keyup", () => {
+        let password_element_value_length = password_input.value.length;
+        if (password_element_value_length < 5) {
+          password_warning.style.display = "block";
+        } else {
+          password_warning.style.display = "none";
+        }
+        showRegisterButton(); // Update button visibility
+      });
+
+      input_filter_dynamic(email_input, emails, email_warning, email_tick);
+      input_filter_dynamic(
+        username_input,
+        usernames,
+        username_warning,
+        username_tick
+      );

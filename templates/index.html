@@ -19,8 +19,24 @@
   </head>
   <body>
     <div class="top">
-      R
-      <span id="share_button">SHARE</span>
+      <div>
+        R
+        <span id="share_button">SHARE</span>
+      </div>
+
+      {% if current_user %}
+      <a href="{{ url_for('register') }}"
+        ><button class="credential_button">My profile</button></a
+      >
+      <a href="{{ url_for('logout') }}"
+        ><button class="credential_button">Log Out</button></a
+      >
+      {% else %}
+      <button class="credential_button">Login</button>
+      <a href="{{ url_for('register') }}"
+        ><button class="credential_button">Register</button></a
+      >
+      {% endif %}
     </div>
 
     <div id="password_modal" class="pass_modal" style="display: none">

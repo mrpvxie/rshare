@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registration Page</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height:100%
+      }
+
+      .container {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
+      }
+
+      .container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #007bff;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
+
+      input[type="email"],
+      input[type="password"],
+      input[type="text"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      .form-group input:focus {
+        border-color: #007bff;
+        outline: none;
+      }
+
+      .register-button {
+        display:none
+        width: 100%;
+        background-color: #007bff;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .register-button:hover {
+        background-color: #0056b3;
+      }
+
+      .form-footer {
+        margin-top: 15px;
+        text-align: center;
+      }
+
+      .form-footer a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      .form-footer a:hover {
+        text-decoration: underline;
+      }
+
+      .password-container {
+        position: relative;
+      }
+
+      .password-container input[type="password"] {
+        padding-right: 40px;
+      }
+
+      .password-toggle {
+        position: absolute;
+        top: 54%;
+        right: 5px;
+        transform: translateY(-50%);
+        cursor: pointer;
+        color: #007bff;
+      }
+
+      .back_button_image {
+        display: none;
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 15px;
+          max-width: 100%;
+        }
+
+        .back_button_image {
+          display: block;
+          height: 55px;
+          aspect-ratio: 1/1;
+          z-index: 10;
+          right: 3%;
+          top: 91%;
+          position: fixed;
+        }
+      }
+      #register_button{
+        display:none;
+      }
+      .warning-box {
+        background-color: #f8d7da;
+        color: #721c24;
+        padding: 10px;
+        border-radius: 5px;
+        margin-top: 10px;
+        display:none;
+      }
+      .tick{
+        display:none;
+        position: relative;
+        left:92%;
+        top:1%;
+      }
+      .gradient-container {
+        height: 100vh;
+        width:100vw;
+        background: linear-gradient(
+          45deg,
+          #00b7ff,
+          #00b7ff 25%,
+          #0033ff 50%,
+          #00b7ff 75%
+        );
+        background-size: 400% 400%;
+        animation: gradientAnimation 10s ease infinite;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+      }
+      @keyframes gradientAnimation {
+        0% {
+          background-position: 0% 0%;
+        }
+        50% {
+          background-position: 100% 100%;
+        }
+        100% {
+          background-position: 0% 0%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="gradient-container">
+      <div class="container">
+        <h2>Register</h2>
+        <form method="POST" action="{{ url_for('register') }}">
+          <div class="form-group">
+            <input
+              type="text"
+              id="username"
+              placeholder="Choose a username"
+              required
+              name="username"
+              class="username_input"
+            />
+            <span class="tick" id="username_tick" style="display: none">
+              ✔️
+            </span>
+            <div id="username_warning" class="warning-box">
+              Username already exists. Please choose another one.
+            </div>
+          </div>
+          <div class="form-group">
+            <input
+              type="email"
+              id="email"
+              placeholder="Enter your email"
+              required
+              name="email"
+              class="email_input"
+            />
+            <span class="tick" id="email_tick" style="display: none"> ✔️ </span>
+            <div id="email_warning" class="warning-box">
+              Email already in use. Please use another email.
+            </div>
+          </div>
+          <div class="form-group password-container">
+            <input
+              type="password"
+              id="password"
+              placeholder="Enter your password"
+              required
+              name="password"
+              class="password_input"
+            />
+            <span class="password-toggle" onclick="togglePassword()"> 👁️ </span>
+          </div>
+          <div id="password_warning" class="warning-box">
+            Password must be atleast 5 characters long
+          </div>
+          <button
+            type="submit"
+            class="register-button"
+            id="register_button"
+            style="display: none"
+          >
+            Register
+          </button>
+        </form>
+        <div class="form-footer">
+          <p>
+            Already have an account?
+            <a href="{{ url_for('register') }}">Login here</a>
+          </p>
+        </div>
+      </div>
+      <a href="{{ url_for('back_button') }}">
+        <img src="../static/images/back_button.png" class="back_button_image" />
+      </a>
+    </div>
+
+    <script>
+      function togglePassword() {
+        const passwordInput = document.getElementById("password");
+        const passwordToggle = document.querySelector(".password-toggle");
+        if (passwordInput.type === "password") {
+          passwordInput.type = "text";
+          passwordToggle.textContent = "🙈";
+        } else {
+          passwordInput.type = "password";
+          passwordToggle.textContent = "👁️";
+        }
+      }
+
+      async function getUserData() {
+        try {
+          const response = await fetch("/get_json_data_user");
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error(error);
+          if (result) {
+            result.textContent = "There was an error fetching the data";
+          }
+        }
+      }
+
+      function input_filter_dynamic(
+        input_element,
+        filtering_list,
+        warning_box_element,
+        tick_element
+      ) {
+        input_element.addEventListener("keyup", () => {
+          let input_element_value = input_element.value.toLowerCase();
+          let preexisting_strings = filtering_list.filter((currentItem) => {
+            return currentItem.toLowerCase() === input_element_value;
+          });
+          if (preexisting_strings.length > 0) {
+            warning_box_element.style.display = "block";
+            tick_element.style.display = "none";
+          } else {
+            warning_box_element.style.display = "none";
+            if (input_element_value.length > 3) {
+              tick_element.style.display = "block";
+            } else {
+              tick_element.style.display = "none";
+            }
+          }
+          showRegisterButton();
+        });
+      }
+
+      function showRegisterButton() {
+        const usernameValid = username_tick.style.display === "block";
+        const emailValid = email_tick.style.display === "block";
+        const passwordValid = password_input.value.length >= 5;
+
+        if (usernameValid && emailValid && passwordValid) {
+          register_button.style.display = "block";
+        } else {
+          register_button.style.display = "none";
+        }
+      }
+
+      // VARIABLES
+      let usernames = [];
+      let emails = [];
+      let register_button = document.querySelector(".register-button");
+
+      let username_warning = document.querySelector("#username_warning");
+      let username_input = document.querySelector(".username_input");
+      let username_tick = document.querySelector("#username_tick");
+
+      let email_tick = document.querySelector("#email_tick");
+      let email_input = document.querySelector(".email_input");
+      let email_warning = document.querySelector("#email_warning");
+
+      let password_input = document.querySelector(".password_input");
+      let password_warning = document.querySelector("#password_warning");
+
+      getUserData().then((userData) => {
+        userData.forEach((currentItem) => {
+          usernames.push(currentItem.username);
+          emails.push(currentItem.email);
+        });
+      });
+
+      password_input.addEventListener("keyup", () => {
+        let password_element_value_length = password_input.value.length;
+        if (password_element_value_length < 5) {
+          password_warning.style.display = "block";
+        } else {
+          password_warning.style.display = "none";
+        }
+        showRegisterButton();
+      });
+
+      input_filter_dynamic(email_input, emails, email_warning, email_tick);
+      input_filter_dynamic(
+        username_input,
+        usernames,
+        username_warning,
+        username_tick
+      );
+    </script>
+  </body>
+</html>
