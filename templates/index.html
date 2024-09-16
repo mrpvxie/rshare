@@ -32,7 +32,7 @@
         ><button class="credential_button">Log Out</button></a
       >
       {% else %}
-      <button class="credential_button">Login</button>
+      <button class="credential_button login_button">Login</button>
       <a href="{{ url_for('register') }}"
         ><button class="credential_button">Register</button></a
       >
@@ -91,6 +91,49 @@
       </div>
     </div>
 
+    <!--LOGIN FORM MODAL-->
+    <div class="login-modal-bg">
+      <div class="login-modal-container">
+        <span class="login-close-btn">×</span>
+        <h2>Login</h2>
+        <form method="POST" action="{{url_for('login')}}">
+          <div class="login-form-group">
+            <input
+              type="text"
+              id="username_input"
+              placeholder="Username_or_Email"
+              required
+              name="username_or_email"
+            />
+            <div id="username_warning" class="warning-box">Text</div>
+            <span class="tick" id="username_tick" style="display: none">
+              ✔️
+            </span>
+          </div>
+
+          <div class="login-form-group">
+            <input
+              type="password"
+              id="password_input"
+              placeholder="Password"
+              required
+              name="password"
+            />
+            {% if wrong_password == 1%}
+            <div
+              id="password_warning"
+              class="warning-box"
+              style="display: block"
+            >
+              Wrong password
+            </div>
+            {% endif%}
+          </div>
+          <button type="submit" class="login-button">Login</button>
+        </form>
+      </div>
+    </div>
+
     <script src="../static/js/script.js"></script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -142,14 +185,105 @@
         if (password_input.value == "123") {
           toggle_password.textContent = "";
           modal_button_container.innerHTML = `
-    <a href="{{ url_for('check_for_admin') }} "
-            ><button class="btn-continue">Continue</button>
-          </a>
-    `;
+      <a href="{{ url_for('check_for_admin') }} "
+              ><button class="btn-continue">Continue</button>
+            </a>
+      `;
         } else {
           modal_button_container.innerHTML = " ";
           toggle_password.textContent = "🙈";
         }
+      });
+
+      // DYNAMIC LOGIN FORM
+
+      async function getUserData() {
+        try {
+          const response = await fetch("/get_json_data_user");
+          if (!response.ok) {
+            throw new Error("Failed to fetch user data");
+          }
+          const data = await response.json();
+          return data;
+        } catch (error) {
+          console.error(error);
+          if (result) {
+            result.textContent = "There was an error fetching the data";
+          }
+        }
+      }
+
+      function contentVisiblity(tick, warning, button, mode) {
+        if (mode) {
+          tick.style.display = "block";
+          warning.style.display = "none";
+          button.style.display = "block";
+        } else {
+          tick.style.display = "none";
+          warning.style.display = "block";
+          button.style.display = "none";
+        }
+      }
+      let usernames = [];
+      let emails = [];
+      getUserData().then((userData) => {
+        userData.forEach((currentItem) => {
+          usernames.push(currentItem.username);
+          emails.push(currentItem.email.replace("gmail.com", ""));
+        });
+      });
+
+      const login_button = document.querySelector(".login_button");
+      const login_form = document.querySelector(".login-modal-bg");
+      const login_modal_close = document.querySelector(".login-close-btn");
+
+      login_form.style.display = "{{wrong_password}}" == 1 ? "flex" : "none";
+
+      login_button.addEventListener("click", () => {
+        login_form.style.display = "flex";
+      });
+      login_modal_close.addEventListener("click", () => {
+        login_form.style.display = "none";
+      });
+
+      const username_input = document.querySelector("#username_input");
+
+      const username_tick = document.querySelector("#username_tick");
+      const warning_box = document.querySelector("#username_warning");
+      const password_warning_box = document.querySelector("#password_warning");
+      const login_submit = document.querySelector(".login-button");
+      username_input.addEventListener("keyup", () => {
+        let username_input_value = username_input.value.trim().toLowerCase();
+        if (username_input_value.includes("@")) {
+          let common_emails = emails.filter((currentItem) => {
+            if (username_input_value.includes(currentItem.toLowerCase())) {
+              return currentItem;
+            }
+          });
+          if (common_emails.length > 0) {
+            contentVisiblity(username_tick, warning_box, login_submit, true);
+          } else {
+            contentVisiblity(username_tick, warning_box, login_submit, false);
+            warning_box.textContent = "No Emails Registered with this name";
+          }
+        } else if (username_input_value.length > 2) {
+          let common_usernames = usernames.filter((currentItem) => {
+            if (currentItem.toLowerCase() == username_input_value) {
+              return currentItem;
+            }
+          });
+          if (common_usernames.length > 0) {
+            contentVisiblity(username_tick, warning_box, login_submit, true);
+          } else {
+            contentVisiblity(username_tick, warning_box, login_submit, false);
+            warning_box.textContent = "No username found";
+          }
+        } else {
+          username_tick.style.display = "none";
+          warning_box.style.display = "none";
+          login_submit.display = "none";
+        }
+        password_warning_box.style.display = "none";
       });
     </script>
   </body>

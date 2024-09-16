@@ -1,151 +1,151 @@
-function togglePassword() { const passwordInput =
-document.getElementById("password"); const passwordToggle =
-document.querySelector(".password-toggle"); if (passwordInput.type ===
-"password") { passwordInput.type = "text"; passwordToggle.textContent = "🙈"; }
-else { passwordInput.type = "password"; passwordToggle.textContent = "👁️"; } }
-function elementVisibility(element, mode) {} async function getUserData() { try
-{ const response = await fetch("/get_json_data_user"); if (!response.ok) { throw
-new Error("Failed to fetch user data"); } const data = await response.json();
-return data; } catch (error) { console.error(error); if (result) {
-result.textContent = "There was an error fetching the data"; } } } function
-input_filter_dynamic( input_element, filtering_list, warning_box_element,
-tick_element ) { input_element.addEventListener("keyup", () => { let
-input_element_value = input_element.value.toLowerCase(); let preexisting_strings
-= filtering_list.filter((currentItem) => { return currentItem.toLowerCase() ===
-input_element_value; }); if (preexisting_strings.length > 0) {
-warning_box_element.style.display = "block"; tick_element.style.display =
-"none"; } else { warning_box_element.style.display = "none"; if
-(input_element_value.length > 3) { tick_element.style.display = "block";
-showRegisterButton(register_button); } else { tick_element.style.display =
-"none"; } } }); } function showRegisterButton(element) { if (
-username_tick.style.display == "block" || email_tick.style.display == "block" ||
-password_warning.style.display == "none" ) { element.style.display = "block"; }
-else { element.style.display = "none"; } } //VARIABLES let input_check = 0; let
-usernames = []; let emails = []; let register_button =
-document.querySelector(".register-button"); let username_warning =
-document.querySelector("#username_warning"); let username_input =
-document.querySelector(".username_input"); let username_tick =
-document.querySelector("#username_tick"); let email_tick =
-document.querySelector("#email_tick"); let email_input =
-document.querySelector(".email_input"); let email_warning =
-document.querySelector("#email_warning"); let password_input =
-document.querySelector(".password_input"); let password_warning =
-document.querySelector("#password_warning"); getUserData().then((userData) => {
-userData.forEach((currentItem) => { usernames.push(currentItem.username);
-emails.push(currentItem.email.replace("@gmail.com", "")); }); });
-password_input.addEventListener("keyup", () => { let
-password_element_value_length = password_input.value.toLowerCase().length; if
-(password_element_value_length < 7) { password_warning.style.display = "block";
-} else { console.log("here"); password_warning.style.display = "none";
-showRegisterButton(register_button); } }); input_filter_dynamic(email_input,
-emails, email_warning, email_tick); input_filter_dynamic( username_input,
-usernames, username_warning, username_tick );
-
-
-function togglePassword() {
-        const passwordInput = document.getElementById("password");
-        const passwordToggle = document.querySelector(".password-toggle");
-        if (passwordInput.type === "password") {
-          passwordInput.type = "text";
-          passwordToggle.textContent = "🙈";
-        } else {
-          passwordInput.type = "password";
-          passwordToggle.textContent = "👁️";
-        }
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Modal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
       }
 
-      async function getUserData() {
-        try {
-          const response = await fetch("/get_json_data_user");
-          if (!response.ok) {
-            throw new Error("Failed to fetch user data");
-          }
-          const data = await response.json();
-          return data;
-        } catch (error) {
-          console.error(error);
-          if (result) {
-            result.textContent = "There was an error fetching the data";
-          }
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f0f0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("nature_tree.avif"); /* Add your image URL here */
+        background-size: cover; /* Ensures the image covers the entire background */
+        background-position: center; /* Centers the image */
+        background-repeat: no-repeat; /* Prevents the image from repeating */
+        backdrop-filter: blur(10px); /* Blur effect */
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
-      function input_filter_dynamic(
-        input_element,
-        filtering_list,
-        warning_box_element,
-        tick_element
-      ) {
-        input_element.addEventListener("keyup", () => {
-          let input_element_value = input_element.value.toLowerCase();
-          let preexisting_strings = filtering_list.filter((currentItem) => {
-            return currentItem.toLowerCase() === input_element_value;
-          });
-          if (preexisting_strings.length > 0) {
-            warning_box_element.style.display = "block";
-            tick_element.style.display = "none";
-          } else {
-            warning_box_element.style.display = "none";
-            if (input_element_value.length > 3) {
-              tick_element.style.display = "block";
-            } else {
-              tick_element.style.display = "none";
-            }
-          }
-          showRegisterButton(); // Update button visibility
-        });
+      /* Modal Background */
+      .login-modal-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(10px); /* Blur effect */
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
 
-      function showRegisterButton() {
-        const usernameValid = username_tick.style.display === "block";
-        const emailValid = email_tick.style.display === "block";
-        const passwordValid = password_input.value.length >= 5;
-
-        // Only show button if all conditions are met
-        if (usernameValid && emailValid && passwordValid) {
-          register_button.style.display = "block";
-        } else {
-          register_button.style.display = "none";
-        }
+      /* Login Modal */
+      .login-modal-container {
+        position: relative;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        max-width: 400px;
+        width: 100%;
       }
 
-      // VARIABLES
-      let usernames = [];
-      let emails = [];
-      let register_button = document.querySelector(".register-button");
+      .login-modal-container h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #00b7ff;
+      }
 
-      let username_warning = document.querySelector("#username_warning");
-      let username_input = document.querySelector(".username_input");
-      let username_tick = document.querySelector("#username_tick");
+      .login-form-group {
+        margin-bottom: 15px;
+      }
 
-      let email_tick = document.querySelector("#email_tick");
-      let email_input = document.querySelector(".email_input");
-      let email_warning = document.querySelector("#email_warning");
+      .login-form-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+      }
 
-      let password_input = document.querySelector(".password_input");
-      let password_warning = document.querySelector("#password_warning");
+      .login-form-group input[type="text"],
+      .login-form-group input[type="password"] {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
 
-      getUserData().then((userData) => {
-        userData.forEach((currentItem) => {
-          usernames.push(currentItem.username);
-          emails.push(currentItem.email);
-        });
-      });
+      .login-form-group input:focus {
+        border-color: #00b7ff;
+        outline: none;
+      }
 
-      password_input.addEventListener("keyup", () => {
-        let password_element_value_length = password_input.value.length;
-        if (password_element_value_length < 5) {
-          password_warning.style.display = "block";
-        } else {
-          password_warning.style.display = "none";
+      /* Login Button */
+      .login-button {
+        width: 100%;
+        background-color: #00b7ff;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+      }
+
+      .login-button:hover {
+        background-color: #0056b3;
+      }
+
+      /* Close Button - Top Right */
+      .login-close-btn {
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        font-size: 24px;
+        cursor: pointer;
+        color: #00b7ff;
+      }
+
+      /* Responsive */
+      @media (max-width: 600px) {
+        .login-modal-container {
+          padding: 15px;
+          max-width: 100%;
         }
-        showRegisterButton(); // Update button visibility
-      });
+      }
+    </style>
+  </head>
+  <body>
+    <div class="login-modal-bg">
+      <div class="login-modal-container">
+        <span class="login-close-btn" onclick="closeModal()">×</span>
+        <h2>Login</h2>
+        <form>
+          <div class="login-form-group">
+            <input type="text" placeholder="Username or Email" required />
+          </div>
+          <div class="login-form-group">
+            <input type="password" placeholder="Password" required />
+          </div>
+          <button type="submit" class="login-button">Login</button>
+        </form>
+      </div>
+    </div>
 
-      input_filter_dynamic(email_input, emails, email_warning, email_tick);
-      input_filter_dynamic(
-        username_input,
-        usernames,
-        username_warning,
-        username_tick
-      );
+    <script>
+      function closeModal() {
+        document.querySelector(".login-modal-bg").style.display = "none";
+      }
+    </script>
+  </body>
+</html>

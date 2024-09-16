@@ -93,7 +93,7 @@ def admin_only(function):
 @app.context_processor
 def common_variable():
     global current_user
-    return dict(current_user = current_user)
+    return dict(current_user = current_user,wrong_password = 0)
 
 @app.route("/")
 def index():
@@ -215,7 +215,7 @@ def get_data_user():
         {
             'id': user.id,
             'username': user.username,
-            'email': user.email   
+            'email': user.email  
         } for user in users
     ]
     
@@ -267,8 +267,7 @@ def register():
     global current_user
     all_user_data = database.session.execute(database.select(User)).scalars().all()
     emails = [user.email for user in all_user_data]
-    usernames = [user.username for user in all_user_data]    
-    print(emails,usernames)     
+    usernames = [user.username for user in all_user_data]      
     if request.method =="POST":
         new_user = User(
             username = request.form.get("username").lower(),
@@ -280,8 +279,28 @@ def register():
         database.session.commit()
         login_user(new_user)
         current_user = new_user
-        return render_template('index.html' )
+        return render_template('index.html')
     return render_template('register.html',emails = emails,usernames = usernames)
+
+@app.route('/login',methods = ['GET','POST'])
+def login():
+    print("--------------login route is running---------")
+    global current_user
+    if request.method == "POST":
+        username_input_data = request.form.get("username_or_email").lower()
+        password_input_data = request.form.get("password")
+        chosen_username = None
+        if("@" in username_input_data):
+            chosen_username = database.session.execute(database.select(User).filter(User.email == username_input_data)).scalar()
+        else:
+            chosen_username = database.session.execute(database.select(User).filter(User.username == username_input_data)).scalar()
+        if chosen_username.password == password_input_data:
+            login_user(chosen_username)
+        else:
+            return render_template('index.html',wrong_password = 1)
+        current_user = chosen_username
+        return render_template('index.html')   
+    return render_template('index.html')
 
 @app.route('/logout')
 def logout():
@@ -296,7 +315,6 @@ def logout():
 #     all_content = database.session.execute(database.select(Content)).scalars().all()
 #     data_list = read_csv_to_dict_list("output.csv")
 #     count  = 0
-#     print(data_list)
 #     for data in all_content:
 #         data.id =  data_list[count]['id']
 #         data.content = data_list[count]['content']
