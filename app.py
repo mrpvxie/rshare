@@ -1,5 +1,5 @@
 from flask import Flask, render_template,request,url_for,redirect,jsonify
-from flask_login import LoginManager,UserMixin,login_user,logout_user,current_user
+from flask_login import LoginManager,UserMixin,login_user,logout_user
 
 
 from flask_sqlalchemy import SQLAlchemy
@@ -43,7 +43,11 @@ app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
 app.config['SECRET_KEY']="rahulsharma122703"
-
+app.config.update(
+    SECRET_KEY='rahulsharma122703', 
+    SESSION_COOKIE_SECURE=True,   
+    SESSION_COOKIE_HTTPONLY=True   
+)
 
 login_manager =  LoginManager()
 login_manager.init_app(app)
