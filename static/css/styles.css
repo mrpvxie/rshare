@@ -8,10 +8,11 @@
   background: #007bff;
   font-weight: bold;
   font-size: 2rem;
-  height: var(--height_of_top);
+  height: 5%;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  z-index: 500;
 }
 
 a {
