@@ -72,6 +72,16 @@ database = SQLAlchemy(model_class = Base)
 database.init_app(app)
 
 
+#CLASSES
+#222
+class CurrentFile:
+    def __init__(self,id,name,timing,size) :
+        self.id = id
+        self.name = name
+        self.time = timing
+        self.size = size
+        
+
 class Content(database.Model):
     id : Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(String)
@@ -334,8 +344,24 @@ def upload_file():
         return jsonify({'message': 'File Uploaded'})
     return jsonify({'error': 'File upload failed'})
 
-# @app.route('/upload_file')
-# def uploaded_files():
+
+#333
+@app.route('/upload_file')
+def uploaded_files():
+    file_list  = []
+    folder_path = './uploads'
+    items = os.listdir(folder_path)
+    file_count = 0
+    for item in items:
+        file_count += 1
+        item_path = os.path.join(folder_path, item)
+        if os.path.isfile(item_path):
+            file_size = os.path.getsize(item_path) 
+            file_size_mb = round(file_size / (1024 * 1024) ,2)
+            print(f"File: {item}, Size: {file_size_mb:.2f} MB")
+        file_list.append(CurrentFile(file_count,item,"N/A",file_size_mb))
+    
+    return render_template('uploaded_files.html',file_list = file_list)
     
 
 # @app.route("/ins ert_data")

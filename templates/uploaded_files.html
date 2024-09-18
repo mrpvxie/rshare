@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ALL CONTENT</title>
+    <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../static/css/table_styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="tbl_content">
+        <div class="search-container">
+          <input type="text" class="search_input" placeholder="Search..." />
+        </div>
+
+        <table class="tbl">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>FILE NAME</th>
+              <th>DATE</th>
+              <th>SIZE</th>
+              <th>ACTION</th>
+            </tr>
+          </thead>
+          <tbody class="table_body">
+            {% for file in file_list %}
+            <tr>
+              <div
+                id="modal_no_{{ file.id }}"
+                class="modal"
+                style="display: none"
+              >
+                <div class="modal-content">
+                  <span class="close">&times;</span>
+                  <p>Are you sure you want to delete this item?</p>
+                  <div class="modal-buttons">
+                    <a href="#">
+                      <button class="btn-yes">Yes</button>
+                    </a>
+                    <button class="btn-no">No</button>
+                  </div>
+                </div>
+              </div>
+              <td data-label="id" class="table_id">
+                <span class="content_text">{{ file.id }}</span>
+              </td>
+
+              <td data-label="file_name" class="content_column table_content">
+                <a href="#"
+                  ><br /><span class="content_text">{{ file.name }}</span></a
+                >
+              </td>
+              <td data-label="date" class="table_time">
+                <span class="content_text"><br />{{ file.time }}</span>
+              </td>
+
+              <td data-label="size" class="table_size">
+                <span class="content_text"><br />{{ file.size }} MB</span>
+              </td>
+
+              <td id="deleteBtn{{ file.id }}" class="table_delete">
+                <button
+                  class="btn_trash delete_button"
+                  data-label="modal_no_{{ file.id }}"
+                >
+                  <i class="fa fa-trash"></i>
+                </button>
+                <a href="#">
+                  <button class="small_upload_button">
+                    <img
+                      src="../static/images/download.png"
+                      id="table_upload_image"
+                    />
+                  </button>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <a href="{{ url_for('back_button') }} "
+          ><img
+            src="../static/images/back_button.png"
+            class="back_button_image"
+        /></a>
+      </div>
+    </div>
+
+    <script>
+      const table_row_container = document.querySelector(".table_body");
+
+      function add_delete_event_listner() {
+        const all_delete_buttons = document.querySelectorAll(".delete_button");
+        all_delete_buttons.forEach((currentItem) => {
+          currentItem.addEventListener("click", () => {
+            const selected_modal = currentItem.getAttribute("data-label");
+            const modal_to_select = document.getElementById(
+              `${selected_modal}`
+            );
+            const no_button = modal_to_select.querySelector(".btn-no");
+            const cross_button = modal_to_select.querySelector(".close");
+
+            modal_to_select.style.display = "block";
+
+            no_button.addEventListener("click", () => {
+              modal_to_select.style.display = "none";
+            });
+            cross_button.addEventListener("click", () => {
+              modal_to_select.style.display = "none";
+            });
+          });
+        });
+      }
+      add_delete_event_listner();
+      let content_data = [];
+      let count = 0;
+      let id = document.querySelectorAll(".table_id");
+      let file_name = document.querySelectorAll(".table_content");
+      let time = document.querySelectorAll(".table_time");
+      let size = document.querySelectorAll(".table_size");
+
+      id.forEach(() => {
+        content_data.push({
+          id: id[count].textContent.trim(),
+          file_name: file_name[count].textContent.trim(),
+          time: time[count].textContent.trim(),
+          size: size[count].textContent.trim(),
+        });
+        count++;
+      });
+      console.log(content_data);
+      function insert_data(data_array) {
+        const row_data = data_array
+          .map((currentItem) => {
+            return `
+                  <tr>
+                        <div id="modal_no_${currentItem.id}" class="modal" style="display:none">
+                            <div class="modal-content">
+                                <span class="close">&times;</span>
+                                <p>Are you sure you want to delete this item?</p>
+                                <div class="modal-buttons">
+                                    <a href="/delete_content/${currentItem.id}">
+                                        <button class="btn-yes">Yes</button>
+                                    </a>
+                                    <button class="btn-no">No</button>
+                                </div>
+                            </div>
+                        </div>
+                      <td data-label="id" class="table_id"><span class="content_text">${currentItem.id}</span></td>
+
+                      <td data-label="content" class="content_column table_content">
+                        <a href="/full_content/${currentItem.id}">
+                          <br><span class="content_text">${currentItem.file_name}</span>
+                        </a>
+                      </td>
+                      <td data-label="time" class="table_time"><span class="content_text"><br>${currentItem.time}</span></td>
+                      <td data-label="size" class="table_size">
+                          <span class="content_text"><br/>${currentItem.size}</span>
+                      </td>
+                      <td id="deleteBtn${currentItem.id}" class="table_delete">
+                          <button class="btn_trash delete_button" data-label="modal_no_${currentItem.id}">
+                              <i class="fa fa-trash"></i>
+                          </button>
+                          <a href="/small_upload/${currentItem.id}">
+                            <button class="small_upload_button">
+                              <img
+                                src="../static/images/download.png"
+                                id="table_upload_image"
+                              />
+                            </button>
+                          </a>
+                      </td>
+                  </tr>`;
+          })
+          .join(" ");
+        table_row_container.innerHTML = row_data;
+      }
+
+      const search_input = document.querySelector(".search_input");
+
+      search_input.addEventListener("keydown", function () {
+        console.log("code is here");
+        const searchValue = search_input.value.toLowerCase().trim();
+        if (searchValue === "") {
+          insert_data(content_data);
+          add_delete_event_listner();
+        } else {
+          const filtered_products = content_data.filter(function (currentItem) {
+            return currentItem.file_name.toLowerCase().includes(searchValue);
+          });
+          if (filtered_products.length === 0) {
+            insert_data([]);
+          } else {
+            insert_data(filtered_products);
+            add_delete_event_listner();
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
