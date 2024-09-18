@@ -365,3 +365,16 @@ body {
   bottom: 2%;
   left: 50%;
 }
+
+@media (max-width: 768px) {
+  .file_content_button {
+    bottom: 90%;
+    top: 0%;
+    left: 40%;
+    height: 5%;
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

@@ -370,7 +370,7 @@ def uploaded_files():
     return render_template('uploaded_files.html',file_list = file_list)
     
     
-@app.route('/download/<int:file_id>',methods = ["GET",'POST'])
+@app.route('/download/<int:file_id>')
 def download(file_id):
     print("--------------download route is running---------")
     global file_list
@@ -381,7 +381,7 @@ def download(file_id):
         return str(e)    
 
 # 222
-@app.route('/delete_file/<int:file_id>',methods = ["GET",'POST'])
+@app.route('/delete_file/<int:file_id>')
 def delete_file(file_id):
     print("--------------delete_file route is running---------")
     folder_path = './uploads' 
