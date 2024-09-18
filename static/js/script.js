@@ -1,13 +1,16 @@
-const modal = document.querySelector(".modal_drag_drop");
+const modal = document.querySelector(".drag_drop_modal_bg");
 const open_modal_button = document.querySelector("#document_button1");
-const modal_cross = document.querySelector(".modal_cross");
+const modal_cross = document.querySelector(".close_button");
 
+const file_container = document.querySelector(".files_container");
 modal_cross.addEventListener("click", () => {
   modal.style.display = "none";
+  file_container.innerHTML = "";
 });
 
 open_modal_button.addEventListener("click", () => {
-  modal.style.display = "block";
+  modal.style.display = "flex";
+  console.log(modal);
 });
 
 const upload_button = document.querySelector(".upload_button");
@@ -15,7 +18,7 @@ const receive_button = document.querySelector(".receive_button");
 const upload_document2 = document.querySelector("#document_button2");
 
 upload_document2.addEventListener("click", () => {
-  modal.style.display = "block";
+  modal.style.display = "flex";
 });
 window.addEventListener("scroll", () => {
   let y_scroll = window.pageYOffset;

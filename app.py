@@ -10,7 +10,7 @@ from functools import wraps
 
 from datetime import datetime
 import re
-
+import os
 # import pandas as pd
 
 
@@ -42,12 +42,17 @@ current_user = None
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
-app.config['SECRET_KEY']="rahulsharma122703"
+app.config['SECRET_KEY'] = "rahulsharma122703"
 app.config.update(
-    SECRET_KEY='rahulsharma122703', 
-    SESSION_COOKIE_SECURE=True,   
-    SESSION_COOKIE_HTTPONLY=True   
+    SECRET_KEY='rahulsharma122703',
+    SESSION_COOKIE_SECURE=True,
+    SESSION_COOKIE_HTTPONLY=True
 )
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+
+# Ensure the upload directory exists
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 login_manager =  LoginManager()
 login_manager.init_app(app)
@@ -313,7 +318,27 @@ def logout():
     current_user = None
     logout_user()
     return redirect(url_for('index'))
-# @app.route("/insert_data")
+
+
+
+@app.route('/upload_file', methods=['POST'])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file part'})
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No selected file'})
+    if file:
+        filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        file.save(filename)
+        return jsonify({'message': 'File Uploaded'})
+    return jsonify({'error': 'File upload failed'})
+
+# @app.route('/upload_file')
+# def uploaded_files():
+    
+
+# @app.route("/ins ert_data")
 # def insert_data():
 #     print("--------------insert_data route is running---------")
 #     all_content = database.session.execute(database.select(Content)).scalars().all()

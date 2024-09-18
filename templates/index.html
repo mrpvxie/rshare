@@ -15,6 +15,7 @@
       rel="stylesheet"
     />
 
+    <link rel="stylesheet" href="../static/css/drag_drop_file.css" />
     <link rel="stylesheet" href="../static/css/styles.css" />
   </head>
   <body>
@@ -70,27 +71,35 @@
 
     <button class="send_doc" id="document_button1">Send document</button>
     <button class="send_doc" id="document_button2">Send document</button>
+    <!--111-->
+    <div class="drag_drop_modal_bg">
+      <div class="drag_drop_container all_container_shadow">
+        <img src="../static/images/cross.png" class="close_button" />
+        <div class="head_container">
+          <h1>UPLOAD FILES</h1>
+          <p>PDF,Images & videos are allowed</p>
+        </div>
 
-    <div class="modal_drag_drop">
-      <img src="../static/images/cross.png" class="modal_cross" />
-      <div class="outer">
-        <div class="inner">
-          <div class="top_icon">
-            <img
-              src="../static/images/drag_and_drop.png"
-              class="drag_drop_icon"
-              draggable="false"
-            />
+        <div class="drop_here">
+          <img src="../static/images/drag_and_drop.png" class="cloud_image" />
+          <h3>Drag & Drop your Files here</h3>
+          <h3>OR</h3>
+          <button class="browser_text osm_button">Browse Files</button>
+          <input
+            id="browser_button"
+            type="file"
+            style="display: none"
+            multiple
+          />
+        </div>
+        <div class="uploading_list">
+          <h3>UPLOADED FILES</h3>
+          <div class="files_container">
+            <!--HERE LI GOES IN -->
           </div>
-          <div class="drag_text">Drag And Drop Files here</div>
-
-          <div class="or_text">Or</div>
-
-          <input class="submit browse_files" type="file" value="Browse Files" />
         </div>
       </div>
     </div>
-
     <!--LOGIN FORM MODAL-->
     <div class="login-modal-bg">
       <div class="login-modal-container">
@@ -181,8 +190,8 @@
 
       // PASSWORD SECTION
 
-      password_input.addEventListener("keydown", () => {
-        if (password_input.value == "123") {
+      password_input.addEventListener("keyup", () => {
+        if (password_input.value == "rahul123") {
           toggle_password.textContent = "";
           modal_button_container.innerHTML = `
       <a href="{{ url_for('check_for_admin') }} "
@@ -286,5 +295,6 @@
         password_warning_box.style.display = "none";
       });
     </script>
+    <script src="../static/js/drag_drop_file.js"></script>
   </body>
 </html>
