@@ -29,6 +29,10 @@ def current_time():
     year = current_date.year
     return f"{day}/{month}/{year}"
 
+def get_file(file_id,file_list):
+    for file in file_list:
+        if file.id == file_id:
+            return file.name
 # def read_csv_to_dict_list(csv_file_path):
 #     df = pd.read_csv(csv_file_path)
     
@@ -73,7 +77,6 @@ database.init_app(app)
 
 
 #CLASSES
-#222
 class CurrentFile:
     def __init__(self,id,name,timing,size) :
         self.id = id
@@ -346,9 +349,9 @@ def upload_file():
     return jsonify({'error': 'File upload failed'})
 
 
-#333
 file_list  = []
 @app.route('/upload_file')
+@admin_only
 def uploaded_files():
     print("--------------uploaded_files route is running---------")
     global file_list
@@ -371,19 +374,24 @@ def uploaded_files():
 def download(file_id):
     print("--------------download route is running---------")
     global file_list
-    selected_file = None
-    print(f"USE FILE ID -> {file_id}")
-    for file in file_list:
-        if file.id == file_id:
-            selected_file = file.name  
-    file_path = f"./uploads/{selected_file}" 
+    file_path = f"./uploads/{get_file(file_id,file_list)}" 
     try:
         return send_file(file_path, as_attachment=True)
     except Exception as e:
         return str(e)    
-    
+
+# 222
+@app.route('/delete_file/<int:file_id>',methods = ["GET",'POST'])
+def delete_file(file_id):
+    print("--------------delete_file route is running---------")
+    folder_path = './uploads' 
+    file_name = get_file(file_id,file_list)
+    file_path = os.path.join(folder_path, file_name) 
+    os.remove(file_path)
+    return redirect(url_for('uploaded_files'))
+   
 #END
-# @app.route("/ins ert_data")
+# @app.route("/insert_data")
 # def insert_data():
 #     print("--------------insert_data route is running---------")
 #     all_content = database.session.execute(database.select(Content)).scalars().all()

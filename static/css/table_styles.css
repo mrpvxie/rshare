@@ -344,3 +344,24 @@ body {
 #table_upload_image {
   height: 30px;
 }
+
+.submit {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 1px solid white;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+}
+
+.file_content_button {
+  position: fixed;
+  bottom: 2%;
+  left: 50%;
+}
