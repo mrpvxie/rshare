@@ -221,6 +221,15 @@
     .close_button{
         height: 40px;
     }
+    .mobile_hide{
+      display: none;
+    }
+    .drag_drop_container{
+      padding: 5%;
+    }
+    .browser_text{
+      margin-top: 5%;
+    }
 }
 
 
@@ -260,3 +269,4 @@ visible            invisible
 .uploaded .cross_emoji {
   display: none;
 }
+
