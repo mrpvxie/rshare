@@ -1,4 +1,4 @@
-from flask import Flask, render_template,request,url_for,redirect,jsonify
+from flask import Flask, render_template,request,url_for,redirect,jsonify,send_file
 from flask_login import LoginManager,UserMixin,login_user,logout_user
 
 
@@ -333,6 +333,7 @@ def logout():
 
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
+    print("--------------upload_file route is running---------")
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'})
     file = request.files['file']
@@ -346,9 +347,12 @@ def upload_file():
 
 
 #333
+file_list  = []
 @app.route('/upload_file')
 def uploaded_files():
-    file_list  = []
+    print("--------------uploaded_files route is running---------")
+    global file_list
+    file_list = []
     folder_path = './uploads'
     items = os.listdir(folder_path)
     file_count = 0
@@ -358,12 +362,27 @@ def uploaded_files():
         if os.path.isfile(item_path):
             file_size = os.path.getsize(item_path) 
             file_size_mb = round(file_size / (1024 * 1024) ,2)
-            print(f"File: {item}, Size: {file_size_mb:.2f} MB")
         file_list.append(CurrentFile(file_count,item,"N/A",file_size_mb))
     
     return render_template('uploaded_files.html',file_list = file_list)
     
-
+    
+@app.route('/download/<int:file_id>',methods = ["GET",'POST'])
+def download(file_id):
+    print("--------------download route is running---------")
+    global file_list
+    selected_file = None
+    print(f"USE FILE ID -> {file_id}")
+    for file in file_list:
+        if file.id == file_id:
+            selected_file = file.name  
+    file_path = f"./uploads/{selected_file}" 
+    try:
+        return send_file(file_path, as_attachment=True)
+    except Exception as e:
+        return str(e)    
+    
+#END
 # @app.route("/ins ert_data")
 # def insert_data():
 #     print("--------------insert_data route is running---------")

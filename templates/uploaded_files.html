@@ -72,7 +72,7 @@
                 >
                   <i class="fa fa-trash"></i>
                 </button>
-                <a href="#">
+                <a href="{{url_for('download', file_id= file.id)}}">
                   <button class="small_upload_button">
                     <img
                       src="../static/images/download.png"
@@ -168,7 +168,7 @@
                           <button class="btn_trash delete_button" data-label="modal_no_${currentItem.id}">
                               <i class="fa fa-trash"></i>
                           </button>
-                          <a href="/small_upload/${currentItem.id}">
+                          <a href="/download/${currentItem.id}">
                             <button class="small_upload_button">
                               <img
                                 src="../static/images/download.png"
