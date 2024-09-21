@@ -41,6 +41,7 @@ body {
 .tbl {
   width: 100%;
   border-collapse: collapse;
+  margin-bottom: 5%;
 }
 .tbl thead {
   background: #007bff;
@@ -151,7 +152,7 @@ body {
 .modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  z-index: 500; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -174,6 +175,7 @@ body {
   position: relative;
   top: 40%;
   margin: 0 auto;
+  z-index: 100;
 }
 
 /* Close Button */
@@ -197,8 +199,7 @@ body {
 .modal-buttons {
   /* border: 2px solid black; */
   display: flex;
-  justify-content: flex-end;
-  gap: 10px;
+  justify-content: space-between;
   margin-top: 20px;
 }
 
@@ -221,7 +222,6 @@ body {
 
 .btn-no {
   background-color: #f44336; /* Red */
-  margin-left: 50%;
 }
 
 /* Responsive Adjustments */
@@ -239,6 +239,7 @@ body {
   }
 
   .modal-buttons {
+    /* border: 2px solid black; */
     flex-direction: column;
     align-items: flex-end;
     display: block;
@@ -248,7 +249,7 @@ body {
     margin-bottom: 5%;
   }
   .btn-no {
-    margin: 20px;
+    margin-top: 20px;
   }
   .modal-buttons button {
     width: 100%; /* Full-width buttons on small screens */

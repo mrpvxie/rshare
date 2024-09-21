@@ -8,14 +8,65 @@ from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
 from sqlalchemy import Integer,String
 
 from functools import wraps
-
 from datetime import datetime
 import re
 import os
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import random
+
+#GLOBAL VARIABLES
+is_admin = 0
+current_user = None
+forgot_password_email_username = None
+open_otp_form = 0
+show_login_form =  None
+global_otp = None
+choose_password = 0
+wrong_otp = 0
+#1FUNCTIONS
+def send_mail(receiver,body,sender = "killbusyness@gmail.com"):
+    server = smtplib.SMTP("smtp.gmail.com", 587)
+    server.starttls()
+    server.login(user="killbusyness@gmail.com", password="kkwa euzs efls oekb")
+    msg = MIMEMultipart()
+    msg['From'] = sender
+    msg['To'] = receiver
+    msg['Subject'] = "SUBJECT"
+    msg.attach(MIMEText(body, 'html'))
+    server.sendmail(sender, receiver, msg.as_string())
+    server.quit()
 
 
-#FUNCTIONS
-
+def send_otp(receiver):
+    global global_otp
+    random_otp = ''.join(random.choice(['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']) for i in range(6))
+    global_otp = random_otp
+    email_body = f'''<!DOCTYPE html>
+                        <html>
+                        <head>
+                        <meta charset="UTF-8">
+                        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>OTP Email</title>
+                        </head>
+                        <body style="font-family: Arial, sans-serif; background-image: linear-gradient(to bottom right, #e6f2ff, #b3d9ff); padding: 20px; margin: 0;">
+                        <div style="max-width: 600px; margin: auto; background-image: linear-gradient(to bottom right, #FFD700, #FFFF00); border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); padding: 40px; text-align: center;">
+                            <p style="font-size: 18px; color: #666; margin-bottom: 20px;">Dear User,</p>
+                            <p style="font-size: 20px;">Your One-Time Password (OTP) is:</p>
+                            <h1 style="font-size: 36px; color: #333; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); margin-bottom: 30px;"><span style="color: #009688; font-weight: bold;">{random_otp}</span></h1>
+                            <p style="font-size: 20px; color: #444;">Please use this OTP to proceed with your action. Remember, this OTP is valid for a single use only.</p>
+                            <div style="position: relative; display: inline-block; overflow: hidden; border-radius: 10px; box-shadow: 0 0 20px rgba(0, 0, 0, 0.1); margin-top: 40px;">
+                                <img src="https://image.pngaaa.com/786/8630786-small.png" alt="OTP Image" style="display: block; width: 100%; transition: transform 0.5s ease-in-out;">
+                            
+                            </div>
+                        </div>
+                        </body>
+                        </html>
+                    '''
+    send_mail(receiver = receiver, body = email_body)              
+    
 def remove_tags(text):
     clean_text = re.sub(r'<.*?>', '', text)
     clean_text = re.sub(r'&nbsp;|&quot;', ' ', clean_text)
@@ -34,9 +85,8 @@ def get_file(file_id,file_list):
         if file.id == file_id:
             return file.name
         
-#GLOBAL VARIABLES
-is_admin = 0
-current_user = None
+
+
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
@@ -109,11 +159,18 @@ def admin_only(function):
 @app.context_processor
 def common_variable():
     global current_user
-    return dict(current_user = current_user,wrong_password = 0)
+    return dict(choose_password = choose_password,
+                current_user = current_user,
+                wrong_password = 0,
+                open_otp_form = 0,
+                forgot_password_email_username =forgot_password_email_username , 
+                show_login_form = show_login_form,
+                wrong_otp = 0)
 
 @app.route("/")
 def index():
-    global is_admin,current_page
+    global is_admin,current_page ,show_login_form
+    show_login_form = 0
     current_page = "index"
     is_admin = 0
     print("--------------index route is running---------")
@@ -285,11 +342,12 @@ def register():
     emails = [user.email for user in all_user_data]
     usernames = [user.username for user in all_user_data]      
     if request.method =="POST":
+        hashed_password = generate_password_hash(request.form.get('password'), method='pbkdf2:sha256',salt_length=8)
         new_user = User(
             username = request.form.get("username").lower(),
             created_on = current_time(),
             email = request.form.get("email").lower(),
-            password = request.form.get("password")
+            password = hashed_password
         )
         database.session.add(new_user)
         database.session.commit()
@@ -301,18 +359,20 @@ def register():
 @app.route('/login',methods = ['GET','POST'])
 def login():
     print("--------------login route is running---------")
-    global current_user
+    global current_user,forgot_password_email_username,wrong_password
+    username_input_data = request.form.get("username_or_email").lower()
     if request.method == "POST":
-        username_input_data = request.form.get("username_or_email").lower()
         password_input_data = request.form.get("password")
         chosen_username = None
         if("@" in username_input_data):
             chosen_username = database.session.execute(database.select(User).filter(User.email == username_input_data)).scalar()
         else:
             chosen_username = database.session.execute(database.select(User).filter(User.username == username_input_data)).scalar()
-        if chosen_username.password == password_input_data:
+        if check_password_hash(chosen_username.password, password_input_data):
             login_user(chosen_username)
         else:
+            forgot_password_email_username = username_input_data
+            wrong_password = 1
             return render_template('index.html',wrong_password = 1)
         current_user = chosen_username
         return render_template('index.html')   
@@ -382,8 +442,68 @@ def delete_file(file_id):
     file_path = os.path.join(folder_path, file_name) 
     os.remove(file_path)
     return redirect(url_for('uploaded_files'))
+
+#111
+
+@app.route('/change_password_inputs',methods = ['GET','POST'])
+def change_password_inputs():
+    print("--------------change_password_inputs route is running---------")
+    # abb OTP type karne ke liye input banana hai
+    global forgot_password_email_username,open_otp_form,show_login_form,global_otp,choose_password,wrong_otp
+    show_login_form = 1
+    open_otp_form = 1
+    if(request.method == "POST"):
+        entred_otp = ""
+        for i in range(1,7):
+            entred_otp += request.form.get(f"otp_input_{i}")
+        if(entred_otp == global_otp):
+            return render_template('index.html',
+                                   show_login_form =show_login_form,
+                                   open_otp_form = 0,
+                                   choose_password = 1) 
+            
+        else:
+            return render_template('index.html',
+                                   show_login_form =show_login_form,
+                                   open_otp_form = 1,
+                                   wrong_otp = 1) 
+            
+    else:
+        user_email = None
+        if("@" not in forgot_password_email_username ):
+            user_email = database.session.execute(database.select(User).filter(User.username == forgot_password_email_username)).scalar()
+        forgot_password_email_username = user_email.email
+        send_otp(user_email.email)
+        
+    return render_template('index.html',
+                           show_login_form =show_login_form,
+                           open_otp_form = 1) 
+ 
+@app.route('/change_password',methods = ['GET','POST'])
+def change_password(): 
+    print("--------------change_password route is running---------")
+    global forgot_password_email_username,current_user,open_otp_form,show_login_form,global_otp,choose_password,wrong_otp
+    chosen_username = None
     
-# END
+    #RESET GLOBAL VARIABLES
+    
+    if (request.method == "POST"):
+        new_password = request.form.get('change_password_input1')
+        
+        chosen_username = database.session.execute(database.select(User).filter(User.email == forgot_password_email_username)).scalar()
+        print(f"THE PASS CHANGE USERNAME IS {chosen_username}")
+        chosen_username.password = generate_password_hash(new_password, method='pbkdf2:sha256',salt_length=8)
+        database.session.commit()
+        current_user = chosen_username
+        login_user(chosen_username)
+    forgot_password_email_username = None
+    open_otp_form = 0
+    show_login_form =  None
+    global_otp = None
+    choose_password = 0
+    wrong_otp = 0
+    return render_template('index.html')
+# END1
 # import pandas as pd        
 # def read_csv_to_dict_list(csv_file_path):
 #     df = pd.read_csv(csv_file_path)

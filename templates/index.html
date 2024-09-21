@@ -39,7 +39,7 @@
       >
       {% endif %}
     </div>
-    <!--111-->
+
     <div id="password_modal" class="pass_modal" style="display: none">
       <div class="modal-content">
         <span class="pass_close">&times;</span>
@@ -71,7 +71,7 @@
 
     <button class="send_doc" id="document_button1">Send document</button>
     <button class="send_doc" id="document_button2">Send document</button>
-    <!--111-->
+
     <div class="drag_drop_modal_bg">
       <div class="drag_drop_container all_container_shadow">
         <img src="../static/images/cross.png" class="close_button" />
@@ -97,15 +97,17 @@
         </div>
         <div class="uploading_list">
           <h3>UPLOADED FILES</h3>
-          <div class = "files_container"></div>
+          <div class="files_container"></div>
         </div>
       </div>
     </div>
     <!--LOGIN FORM MODAL-->
+
     <div class="login-modal-bg">
       <div class="login-modal-container">
         <span class="login-close-btn">×</span>
         <h2>Login</h2>
+
         <form method="POST" action="{{url_for('login')}}">
           <div class="login-form-group">
             <input
@@ -121,7 +123,7 @@
             </span>
           </div>
 
-          <div class="login-form-group">
+          <div class="login-form-group" id="wrong_password_forgot_password">
             <input
               type="password"
               id="password_input"
@@ -129,7 +131,7 @@
               required
               name="password"
             />
-            {% if wrong_password == 1%}
+            {% if wrong_password == 1 %}
             <div
               id="password_warning"
               class="warning-box"
@@ -137,10 +139,78 @@
             >
               Wrong password
             </div>
-            {% endif%}
+            <!--111-->
+            <a href="{{url_for('change_password_inputs')}}">
+              <div
+                id="forgot_password_button"
+                class="warning-box forgot_password"
+                style="display: block; cursor: pointer"
+              >
+                forgot password? click here to change
+              </div>
+            </a>
+
+            {% endif %}
           </div>
           <button type="submit" class="login-button">Login</button>
         </form>
+
+        {%if open_otp_form == 1 and choose_password == 0 %}
+        <center style="color: #007bff"><h3>OR</h3></center>
+        <div class="otp-container">
+          <h4>Enter OTP send on {{forgot_password_email}}</h4>
+          {% if wrong_otp == 1 %}
+          <div
+            id="password_warning"
+            class="warning-box"
+            style="display: block; margin-bottom: 10px"
+          >
+            Wrong O.T.P. entered
+          </div>
+          {% endif %}
+          <form method="POST" action="{{url_for('change_password_inputs')}}">
+            <div class="otp-input">
+              <input type="text" maxlength="1" autofocus name="otp_input_1" />
+              <input type="text" maxlength="1" name="otp_input_2" />
+              <input type="text" maxlength="1" name="otp_input_3" />
+              <input type="text" maxlength="1" name="otp_input_4" />
+              <input type="text" maxlength="1" name="otp_input_5" />
+              <input type="text" maxlength="1" name="otp_input_6" />
+            </div>
+            <button class="submit-btn" style="display: none">Submit</button>
+          </form>
+        </div>
+        {% endif %}
+        <!--CHOOSE PASSWORD FORM-->
+        {% if choose_password == 1 %}
+        <center style="color: #007bff"><h3>OR</h3></center>
+        <form method="POST" action="{{url_for('change_password')}}">
+          <div class="login-form-group">
+            <input
+              type="text"
+              id="change_password_input1"
+              placeholder="CHOOSE NEW PASSWORD"
+              required
+              name="change_password_input1"
+            />
+          </div>
+          <div class="login-form-group">
+            <input
+              type="text"
+              id="change_password_input2"
+              placeholder="CONFIRM PASSWORD"
+              required
+              name="change_password_input2"
+            />
+            <div id="change_password_input2_warning" class="warning-box">
+              Passwords Don't match
+            </div>
+          </div>
+          <button class="change_password_submit_button" style="display: none">
+            Submit
+          </button>
+        </form>
+        {% endif %}
       </div>
     </div>
 
@@ -152,6 +222,80 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.18/summernote-bs4.min.js"></script>
     <script>
+      if ("{{choose_password}}" == 1) {
+        function checkPasswords() {
+          const password1 = document.getElementById(
+            "change_password_input1"
+          ).value;
+          const password2 = document.getElementById(
+            "change_password_input2"
+          ).value;
+          const submitBtn = document.querySelector(
+            ".change_password_submit_button"
+          );
+          const warningBox = document.getElementById(
+            "change_password_input2_warning"
+          );
+
+          if (password1.length < 5 || password2.length < 5) {
+            submitBtn.style.display = "none";
+            warningBox.style.display = "block";
+            warningBox.textContent = "Password must be at least 5 characters.";
+          } else if (password1 !== password2) {
+            submitBtn.style.display = "none";
+            warningBox.style.display = "block";
+            warningBox.textContent = "Passwords don't match.";
+          } else {
+            submitBtn.style.display = "inline-block";
+            warningBox.style.display = "none";
+          }
+        }
+
+        document
+          .getElementById("change_password_input1")
+          .addEventListener("input", checkPasswords);
+        document
+          .getElementById("change_password_input2")
+          .addEventListener("input", checkPasswords);
+      }
+      const is_otp_form_on = "{{open_otp_form}}";
+      if (is_otp_form_on == 1) {
+        const inputs = document.querySelectorAll(".otp-input input");
+        const submitBtn = document.querySelector(".submit-btn");
+
+        function checkOtpInputs() {
+          let allFilled = true;
+          inputs.forEach((input) => {
+            if (!input.value) {
+              allFilled = false;
+            }
+          });
+
+          if (allFilled) {
+            submitBtn.style.display = "block";
+          } else {
+            submitBtn.style.display = "none";
+          }
+        }
+
+        checkOtpInputs();
+
+        inputs.forEach((input, index) => {
+          input.addEventListener("input", () => {
+            if (input.value && index < inputs.length - 1) {
+              inputs[index + 1].focus();
+            }
+            checkOtpInputs();
+          });
+
+          input.addEventListener("keydown", (e) => {
+            if (e.key === "Backspace" && !input.value && index > 0) {
+              inputs[index - 1].focus();
+            }
+            checkOtpInputs();
+          });
+        });
+      }
       $(document).ready(function () {
         var content = `{{render_content|safe}}`;
         $("#summernote2").summernote("code", content);
@@ -190,7 +334,6 @@
       });
 
       // PASSWORD SECTION
-
       password_input.addEventListener("keyup", () => {
         if (password_input.value == "rahul123") {
           toggle_password.textContent = "";
@@ -206,7 +349,6 @@
       });
 
       // DYNAMIC LOGIN FORM
-
       async function getUserData() {
         try {
           const response = await fetch("/get_json_data_user");
@@ -247,7 +389,11 @@
       const login_form = document.querySelector(".login-modal-bg");
       const login_modal_close = document.querySelector(".login-close-btn");
 
-      login_form.style.display = "{{wrong_password}}" == 1 ? "flex" : "none";
+      if ("{{show_login_form}}" == 1 || "{{wrong_password}}" == 1) {
+        login_form.style.display = "flex";
+      } else {
+        login_form.style.display = "none";
+      }
 
       login_button.addEventListener("click", () => {
         login_form.style.display = "flex";
@@ -262,6 +408,9 @@
       const warning_box = document.querySelector("#username_warning");
       const password_warning_box = document.querySelector("#password_warning");
       const login_submit = document.querySelector(".login-button");
+      const forgot_password_button = document.querySelector(
+        "#forgot_password_button"
+      );
       username_input.addEventListener("keyup", () => {
         let username_input_value = username_input.value.trim().toLowerCase();
         if (username_input_value.includes("@")) {
@@ -294,6 +443,7 @@
           login_submit.display = "none";
         }
         password_warning_box.style.display = "none";
+        login_form.style.display = "{{wrong_password}}" == 1 ? "flex" : "none";
       });
     </script>
     <script src="../static/js/drag_drop_file.js"></script>

@@ -571,9 +571,8 @@ def show_comment(comment_id): #show123
 
 @app.route('/change_password',methods = ['GET','POST'])
 def change_password():
-    global logged_in,current_user_id,current_user,current_user_email
-    error = 2
-    change_password_form = ChangePasswordForm()
+    
+
     if change_password_form.validate_on_submit():
         password1 = change_password_form.password1.data
         password2 = change_password_form.password2.data  

@@ -595,3 +595,86 @@ a:hover {
   position: relative;
   left: 92%;
 }
+
+.forgot_password {
+  background: #007bff;
+  color: white;
+}
+
+.otp-container {
+  background-color: white;
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.otp-container h2 {
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.otp-input {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.otp-input input {
+  width: 50px;
+  height: 60px;
+  font-size: 24px;
+  text-align: center;
+  border: 2px solid #007bff;
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  outline: none;
+}
+
+.otp-input input:focus {
+  border-color: #339cff;
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+  transform: scale(1.05);
+}
+
+.submit-btn {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.submit-btn:hover {
+  background-color: #0056b3;
+}
+
+.change_password_submit_button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.change_password_submit_button:hover {
+  background-color: #0056b3;
+}
+
+#wrong_password_forgot_password {
+  /* border: 2px solid black; */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
