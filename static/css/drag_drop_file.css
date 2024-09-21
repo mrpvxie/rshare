@@ -92,18 +92,32 @@
 }
 
 .files_container {
-  /* border: 2px solid rgb(218, 13, 13); */
+  /* border: 2px solid rgb(0, 255, 179); */
+  overflow: scroll;
+  max-height: 200px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 .file_info {
-  /* border: 2px solid green; */
+  /* border: 2px solid rgb(0, 0, 0); */
   display: flex;
   justify-content: space-between;
   margin: 2%;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 10px;
 }
+.file_info:hover{
+  transform: scale(1.019);
+  /* box-shadow:0px 2px 5px rgba(0, 0, 0, 0.1);  */
+  transition: all 0.3s ease;
+}
+
 .icon_container {
+  display: block;
   height: 2%;
-  width: 8%;
-  /* border: 2px solid green; */
+  /* border: 2px solid rgb(4, 0, 247); */
 }
 .file_icon {
   height: 2.5rem;
@@ -111,11 +125,13 @@
 }
 .colmun {
   /* border: 2px solid rgb(0, 0, 0); */
-  width: 80%;
+  width: 82%;
   color: #007bff;
   font-weight: bold;
 }
 .file_name {
+  /* border: 2px solid black; */
+  overflow:hidden;
   display: flex;
   justify-content: space-between;
 }
@@ -123,15 +139,14 @@
 .file_progress {
   background-color: #e0e0e0; 
   border-radius: 25px; 
-  padding: 5px;
   position: relative;
   height: 5px;
-  width: 100%;
   box-shadow: inset 0px 2px 5px rgba(0, 0, 0, 0.1); 
   overflow: hidden;
 }
 
 .file_progress span {
+  position: relative;
   display: block;
   height: 100%;
   background-color: #007bff; 
@@ -209,12 +224,12 @@
 
 @media (max-width:780px) {
     .colmun{
-        width: 75%;
+      /* border: 2px solid  black; */
+      width: 75%;
     }
     .icon_container{
-        width: 12%;
+        width: 20%;
     }
-
     .drag_drop_container{
         max-width: 90%;
     }
@@ -233,7 +248,10 @@
 }
 
 
-
+.percentage{
+  color: black;
+  border-left: 1.5px solid rgb(179, 179, 179);
+}
 /* 
 During upload
 visible            invisible
@@ -247,6 +265,7 @@ visible            invisible
 .file_progress 
 .right_emoji 
 */
+
 
 /* During upload */
 .uploading .percentage,

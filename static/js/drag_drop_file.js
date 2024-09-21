@@ -69,7 +69,9 @@ upload_file = (file) => {
                                 <div class="name">${file.name}</div>
                                 <span>0%</span>
                             </div>
-                            
+                            <div class="file_progress">
+                                <span></span>
+                            </div>
                             <div class="file_size">${(
                               file.size /
                               (1024 * 1024)
@@ -89,9 +91,16 @@ upload_file = (file) => {
     li_element.classList.add("uploaded");
     li_element.classList.remove("uploading");
   };
+  // http.upload.onprogress = (event) => {
+  //   let percentage = (event.loaded / event.total) * 100;
+  //   li_element.querySelector("span").innerHTML = Math.round(percentage) + "%";
+  // };
+  console.log(li_element.querySelectorAll("span")[1]);
   http.upload.onprogress = (event) => {
     let percentage = (event.loaded / event.total) * 100;
-    li_element.querySelector("span").innerHTML = Math.round(percentage) + "%";
+    li_element.querySelectorAll("span")[0].innerHTML =
+      Math.round(percentage) + "%";
+    li_element.querySelectorAll("span")[1].style.width = percentage + "%";
   };
 
   http.open("POST", "/upload_file", true);

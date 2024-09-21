@@ -1,6 +1,7 @@
 const modal = document.querySelector(".drag_drop_modal_bg");
 const open_modal_button = document.querySelector("#document_button1");
 const modal_cross = document.querySelector(".close_button");
+const html_body = document.querySelector("body");
 
 const file_container = document.querySelector(".files_container");
 modal_cross.addEventListener("click", () => {
@@ -20,27 +21,29 @@ const upload_document2 = document.querySelector("#document_button2");
 upload_document2.addEventListener("click", () => {
   modal.style.display = "flex";
 });
-window.addEventListener("scroll", () => {
-  let y_scroll = window.pageYOffset;
+const html_width = html_body.getBoundingClientRect().width;
+if (html_width < 800) {
+  window.addEventListener("scroll", () => {
+    let y_scroll = window.pageYOffset;
+    if (y_scroll >= 600) {
+      receive_button.style.zIndex = "1";
+      receive_button.style.opacity = "1";
 
-  if (y_scroll >= 600) {
-    receive_button.style.zIndex = "1";
-    receive_button.style.opacity = "1";
+      upload_button.style.zIndex = "-1";
+      upload_button.style.opacity = "0";
 
-    upload_button.style.zIndex = "-1";
-    upload_button.style.opacity = "0";
+      upload_document2.style.animation = `slideFromLeft 1s ease forwards`;
+    } else {
+      upload_button.style.zIndex = "1";
+      upload_button.style.opacity = "1";
 
-    upload_document2.style.animation = `slideFromLeft 1s ease forwards`;
-  } else {
-    upload_button.style.zIndex = "1";
-    upload_button.style.opacity = "1";
+      receive_button.style.zIndex = "-1";
+      receive_button.style.opacity = "0";
 
-    receive_button.style.zIndex = "-1";
-    receive_button.style.opacity = "0";
-
-    upload_document2.style.animation = `none`;
-  }
-});
+      upload_document2.style.animation = `none`;
+    }
+  });
+}
 
 let fixed_height = 750;
 

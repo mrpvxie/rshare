@@ -1,6 +1,7 @@
 from flask import Flask, render_template,request,url_for,redirect,jsonify,send_file
 from flask_login import LoginManager,UserMixin,login_user,logout_user
 
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
@@ -11,7 +12,6 @@ from functools import wraps
 from datetime import datetime
 import re
 import os
-# import pandas as pd
 
 
 #FUNCTIONS
@@ -33,13 +33,7 @@ def get_file(file_id,file_list):
     for file in file_list:
         if file.id == file_id:
             return file.name
-# def read_csv_to_dict_list(csv_file_path):
-#     df = pd.read_csv(csv_file_path)
-    
-#     data_list = df.to_dict(orient='records')
-    
-#     return data_list
-
+        
 #GLOBAL VARIABLES
 is_admin = 0
 current_user = None
@@ -380,7 +374,6 @@ def download(file_id):
     except Exception as e:
         return str(e)    
 
-# 222
 @app.route('/delete_file/<int:file_id>')
 def delete_file(file_id):
     print("--------------delete_file route is running---------")
@@ -389,20 +382,71 @@ def delete_file(file_id):
     file_path = os.path.join(folder_path, file_name) 
     os.remove(file_path)
     return redirect(url_for('uploaded_files'))
-   
-#END
+    
+# END
+# import pandas as pd        
+# def read_csv_to_dict_list(csv_file_path):
+#     df = pd.read_csv(csv_file_path)
+    
+#     data_list = df.to_dict(orient='records')
+    
+#     return data_list
 # @app.route("/insert_data")
 # def insert_data():
+    
+#     # EXECUTE THIS QUERY
+#     # -- Step 0: Drop the temp table if it already exists
+#     # DROP TABLE IF EXISTS temp_ids;
+
+#     # -- Step 1: Create a temporary table for random IDs
+#     # CREATE TEMP TABLE temp_ids (new_id INTEGER UNIQUE);
+
+#     # -- Step 2: Insert random unique 3-digit IDs into the temporary table
+#     # INSERT INTO temp_ids (new_id)
+#     # SELECT DISTINCT 100 + ABS(RANDOM()) % 900
+#     # FROM content
+#     # LIMIT (SELECT COUNT(*) FROM content);
+
+#     # -- Step 3: Update the original table with the new random IDs
+#     # WITH numbered_content AS (
+#     #   SELECT id, ROW_NUMBER() OVER () AS row_num
+#     #   FROM content
+#     # ),
+#     # numbered_ids AS (
+#     #   SELECT new_id, ROW_NUMBER() OVER () AS row_num
+#     #   FROM temp_ids
+#     # )
+#     # UPDATE content
+#     # SET id = (SELECT new_id FROM numbered_ids WHERE numbered_ids.row_num = numbered_content.row_num)
+#     # FROM numbered_content
+#     # WHERE content.id = numbered_content.id;
+
+#     # -- Step 4: Drop the temporary table
+#     # DROP TABLE temp_ids;
+
 #     print("--------------insert_data route is running---------")
 #     all_content = database.session.execute(database.select(Content)).scalars().all()
 #     data_list = read_csv_to_dict_list("output.csv")
 #     count  = 0
-#     for data in all_content:
-#         data.id =  data_list[count]['id']
-#         data.content = data_list[count]['content']
-#         data.time = data_list[count]['time']
+#     print(all_content)
+#     for data in data_list :
+        
+#         try:
+#             all_content[count].id = data['id'] + 100
+#             all_content[count].content = data['content']
+#             all_content[count].time = data['time']
+#             database.session.commit()
+#         except:
+#             new_content = Content(
+#                 content = data['content'],
+#                 time = data['time']
+#             )
+            
+#             database.session.add(new_content)
+#             database.session.commit()
 #         count += 1
-#     database.session.commit()
+#         print(f"------- INSERTION ITERATION {count}  -------")
+        
 #     return "<h1>DATA INSERTED SUCCESSFULLY</H1>"
 
 if __name__ == "__main__":
