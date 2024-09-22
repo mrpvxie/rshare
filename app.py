@@ -97,7 +97,7 @@ app.config.update(
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True
 ) 
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads') #222
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads') 
 
 # Ensure the upload directory exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -123,6 +123,14 @@ class CurrentFile:
         self.name = name
         self.time = timing
         self.size = size
+
+class CurrentUser:
+    def __init__(self,id,username,email,content,file):
+        self.id = id
+        self.username  = username
+        self.email = email 
+        self.content = content
+        self.file = file
         
 #TABLES 
 class Base(DeclarativeBase):
@@ -162,8 +170,8 @@ with app.app_context():
 def admin_only(function):
     @wraps(function)
     def wrapper(*args,**kwargs):
-        if (not is_admin):
-            return render_template("admin_only.html")   
+        if (current_user.id != 1):
+            return "<h1>only admin allowed</h1>"
         return function(*args,**kwargs)
     return wrapper    
     
@@ -410,7 +418,7 @@ def logout():
     return redirect(url_for('index'))
 
 
-#111
+
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
     print("--------------upload_file route is running---------")
@@ -444,24 +452,16 @@ def upload_file():
 
 
 file_list = []
-
-@app.route('/uploaded_files')
-def uploaded_files():
-    print("--------------uploaded_files route is running---------")
-    global file_list, current_user
+@app.route('/general_uploaded_files')
+def general_uploaded_files():
+    print("--------------general_uploaded_files route is running---------")
+    global file_list,user_content_page
+    user_content_page = "general_uploaded_files"
+    
     file_list = []
-    
-    # Determine folder path: user-specific or general folder
-    if current_user:
-        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.username)
-    else:
-        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], 'general')
-    
-    # Check if folder exists, if not return an empty list message
+    folder_path = os.path.join(app.config['UPLOAD_FOLDER'], 'general')
     if not os.path.exists(folder_path):
         return jsonify({'message': 'No files uploaded'})
-    
-    # List files in the folder
     items = os.listdir(folder_path)
     file_count = 0
     for item in items:
@@ -470,9 +470,30 @@ def uploaded_files():
             file_count += 1
             file_size = os.path.getsize(item_path)
             file_size_mb = round(file_size / (1024 * 1024), 2)
-            # Assuming CurrentFile is a class you're using to represent files
             file_list.append(CurrentFile(file_count, item, "N/A", file_size_mb))
-    
+    return render_template('uploaded_files.html', file_list=file_list)
+
+@app.route('/uploaded_files')
+def uploaded_files():
+    print("--------------uploaded_files route is running---------")
+    global file_list, current_user,user_content_page
+    user_content_page = "uploaded_files"
+    file_list = []
+    if current_user:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.username)
+    else:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], 'general')
+    if not os.path.exists(folder_path):
+        return jsonify({'message': 'No files uploaded'})
+    items = os.listdir(folder_path)
+    file_count = 0
+    for item in items:
+        item_path = os.path.join(folder_path, item)
+        if os.path.isfile(item_path):
+            file_count += 1
+            file_size = os.path.getsize(item_path)
+            file_size_mb = round(file_size / (1024 * 1024), 2)
+            file_list.append(CurrentFile(file_count, item, "N/A", file_size_mb))
     return render_template('uploaded_files.html', file_list=file_list)
     
     
@@ -485,15 +506,24 @@ def download(file_id):
         return send_file(file_path, as_attachment=True)
     except Exception as e:
         return str(e)    
-
+    
 @app.route('/delete_file/<int:file_id>')
 def delete_file(file_id):
     print("--------------delete_file route is running---------")
-    folder_path = './uploads' 
-    file_name = get_file(file_id,file_list)
-    file_path = os.path.join(folder_path, file_name) 
-    os.remove(file_path)
-    return redirect(url_for('uploaded_files'))
+    global current_user, file_list,user_content_page
+    if current_user and user_content_page == "uploaded_files":
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.username)
+    else:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], 'general')
+    file_name = get_file(file_id, file_list)
+    file_path = os.path.join(folder_path, file_name)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+        print(f"File {file_name} deleted successfully.")
+    else:
+        print(f"File {file_name} not found.")
+    
+    return redirect(url_for(user_content_page))
 
 @app.route('/change_password_inputs',methods = ['GET','POST'])
 def change_password_inputs():
@@ -548,7 +578,13 @@ def change_password():
     wrong_otp = 0
     return render_template('index.html')
 
-
+@app.route('/admin_access')
+@admin_only #111
+def admin_access(): 
+    print("--------------admin_access route is running---------")
+    # user_data
+    user_data = database.session.execute(database.select(User)).scalars().all()
+    return render_template('admin_only.html',user_data = user_data)
 
 # #END1
 # import pandas as pd        
