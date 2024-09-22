@@ -448,7 +448,6 @@ def delete_file(file_id):
 @app.route('/change_password_inputs',methods = ['GET','POST'])
 def change_password_inputs():
     print("--------------change_password_inputs route is running---------")
-    # abb OTP type karne ke liye input banana hai
     global forgot_password_email_username,open_otp_form,show_login_form,global_otp,choose_password,wrong_otp
     show_login_form = 1
     open_otp_form = 1
