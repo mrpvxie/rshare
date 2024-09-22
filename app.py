@@ -469,11 +469,11 @@ def change_password_inputs():
                                    wrong_otp = 1) 
             
     else:
-        user_email = None
+        
         if("@" not in forgot_password_email_username ):
             user_email = database.session.execute(database.select(User).filter(User.username == forgot_password_email_username)).scalar()
-        forgot_password_email_username = user_email.email
-        send_otp(user_email.email)
+            forgot_password_email_username = user_email.email
+        send_otp(forgot_password_email_username)
         
     return render_template('index.html',
                            show_login_form =show_login_form,

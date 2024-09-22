@@ -602,13 +602,15 @@ a:hover {
 }
 
 .otp-container {
-  background-color: white;
+  background-color: rgb(252, 250, 250);
   padding: 40px;
   border-radius: 15px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
   text-align: center;
   width: 100%;
   max-width: 400px;
+  border: 1px solid rgb(189, 189, 189);
+  transition: all 0.8s ease;
 }
 
 .otp-container h2 {
@@ -638,6 +640,20 @@ a:hover {
   border-color: #339cff;
   box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
   transform: scale(1.05);
+}
+
+@media (max-width: 780px) {
+  .otp-input input {
+    width: 35px;
+    height: 45px;
+    font-size: 23px;
+    text-align: center;
+    border: 2px solid #007bff;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    outline: none;
+  }
 }
 
 .submit-btn {
