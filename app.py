@@ -4,7 +4,7 @@ from flask_login import LoginManager,UserMixin,login_user,logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column
+from sqlalchemy.orm import DeclarativeBase,Mapped,mapped_column,relationship
 from sqlalchemy import Integer,String
 
 from functools import wraps
@@ -25,6 +25,7 @@ show_login_form =  None
 global_otp = None
 choose_password = 0
 wrong_otp = 0
+user_content_page = None
 #1FUNCTIONS
 def send_mail(receiver,body,sender = "killbusyness@gmail.com"):
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -95,8 +96,8 @@ app.config.update(
     SECRET_KEY='rahulsharma122703',
     SESSION_COOKIE_SECURE=True,
     SESSION_COOKIE_HTTPONLY=True
-)
-app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
+) 
+app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads') #222
 
 # Ensure the upload directory exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -113,11 +114,6 @@ def load_user(user_id):
 current_page = None
 small_upload_button_page = None
 
-#TABLES 
-class Base(DeclarativeBase):
-    pass
-database = SQLAlchemy(model_class = Base)
-database.init_app(app)
 
 
 #CLASSES
@@ -128,18 +124,34 @@ class CurrentFile:
         self.time = timing
         self.size = size
         
+#TABLES 
+class Base(DeclarativeBase):
+    pass
+database = SQLAlchemy(model_class = Base)
+database.init_app(app)
+
 
 class Content(database.Model):
-    id : Mapped[int] = mapped_column(Integer, primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     content: Mapped[str] = mapped_column(String)
     time: Mapped[str] = mapped_column(String)
     
-class User(UserMixin,database.Model):
-    id:Mapped[int] = mapped_column(Integer, primary_key=True)
-    username:Mapped[str] = mapped_column(String)
-    created_on:Mapped[str] = mapped_column(String)
-    email:Mapped[str] = mapped_column(String)
-    password:Mapped[str] = mapped_column(String)
+    # Foreign key column linking to the User table
+    user_id: Mapped[int] = mapped_column(Integer, database.ForeignKey('user.id'))
+
+    # Define a relationship between Content and User
+    user = relationship('User', back_populates='contents')
+
+
+class User(UserMixin, database.Model):
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String)
+    created_on: Mapped[str] = mapped_column(String)
+    email: Mapped[str] = mapped_column(String)
+    password: Mapped[str] = mapped_column(String)
+
+    # Define the relationship back to Content
+    contents = relationship('Content', back_populates='user')
     
    
 with app.app_context():
@@ -169,23 +181,34 @@ def common_variable():
 
 @app.route("/")
 def index():
-    global is_admin,current_page ,show_login_form
+    global forgot_password_email_username,current_user,open_otp_form,show_login_form,global_otp,choose_password,wrong_otp,current_page,is_admin
+    
     show_login_form = 0
     current_page = "index"
     is_admin = 0
+    
+    forgot_password_email_username = None
+    open_otp_form = 0
+    show_login_form =  None
+    global_otp = None
+    choose_password = 0
+    wrong_otp = 0
+    
     print("--------------index route is running---------")
     return render_template("index.html")
+
 
 @app.route("/upload",methods = ['POST','GET'])
 def upload():
     print("--------------upload route is running---------")
-    
+    global current_user
     if request.method == "POST":
         content = request.form.get("summernote1")
-        if content:   
+        if content:    
             new_content = Content(
                 content = content,
-                time = current_time()
+                time = current_time(),
+                user_id = current_user.id if current_user else 0
             )
             
             database.session.add(new_content)
@@ -205,13 +228,13 @@ def receive():
 
 
 @app.route("/table_data")
-@admin_only
 def table_data():
     print("--------------table_data route is running---------")
-    global current_page,small_upload_button_page
+    global current_page,small_upload_button_page,user_content_page
     current_page = "index"
     small_upload_button_page = "table_data"
-    content_data = Content.query.all()
+    user_content_page = "table_data"
+    content_data =  database.session.execute(database.select(Content).where(Content.user_id == 0)).scalars().all()
     json_data = [
         {
             'id': content.id,
@@ -230,25 +253,16 @@ def check_for_admin():
     return redirect(url_for("table_data")) 
 
 @app.route("/delete_content/<int:content_id>")
-@admin_only
 def delete_content(content_id):
     print("--------------delete_content route is running---------")
+    global user_content_page
     content_to_delete = database.get_or_404(Content,content_id)
     database.session.delete(content_to_delete)
     database.session.commit()
-    content_data = Content.query.all()
-    json_data = [
-        {
-            'id': content.id,
-            'content': remove_tags(content.content),
-            'time': content.time  
-        } for content in content_data
-    ]
-    return render_template("table_data.html", data = json_data)
+    return redirect(url_for(user_content_page)) 
 
 
 @app.route("/full_content/<int:content_id>",methods = ['POST','GET'])
-@admin_only
 def full_content(content_id):
     print("--------------full_content route is running---------")
     global current_page,small_upload_button_page
@@ -264,7 +278,6 @@ def back_button():
     return redirect(url_for(current_page))
 
 @app.route('/get_json_data_content', methods=['GET'])
-@admin_only
 def get_data():
     print("--------------get_data route is running---------")
     
@@ -295,7 +308,6 @@ def get_data_user():
     return jsonify(data)
 
 @app.route("/Edit/<int:content_id>",methods = ['POST','GET'])
-@admin_only
 def edit_content(content_id):
     print("--------------edit_content route is running---------")
     chosen_content = database.session.execute(database.select(Content).where(Content.id == content_id)).scalar()
@@ -306,16 +318,16 @@ def edit_content(content_id):
     return render_template("full_content.html",content_data = chosen_content)
 
 @app.route("/small_upload/<int:content_id>",methods = ['POST','GET'])
-@admin_only
 def small_upload(content_id):
     global small_upload_button_page
     
     print("--------------small_upload route is running---------")
     chosen_content = database.session.execute(database.select(Content).where(Content.id == content_id)).scalar()
     
-    new_content = Content(
+    new_content = Content( 
     content = chosen_content.content,
-    time = chosen_content.time
+    time = chosen_content.time,
+    user_id = 0
     )
     database.session.add(new_content)
     database.session.delete(chosen_content)
@@ -378,6 +390,17 @@ def login():
         return render_template('index.html')   
     return render_template('index.html')
 
+
+@app.route('/my_profile')
+def my_profile():
+    print("--------------my_profile route is running---------")
+    global current_user,current_page,user_content_page
+    current_page = "index"
+    user_content_page = "my_profile"
+    table_contents = database.session.execute(database.select(Content).where(Content.user_id == current_user.id)).scalars().all()
+    return render_template('user_data.html',table_contents = table_contents)
+
+
 @app.route('/logout')
 def logout():
     print("--------------logout route is running---------")
@@ -387,41 +410,70 @@ def logout():
     return redirect(url_for('index'))
 
 
-
+#111
 @app.route('/upload_file', methods=['POST'])
 def upload_file():
     print("--------------upload_file route is running---------")
+    global current_user
+    
     if 'file' not in request.files:
         return jsonify({'error': 'No file part'})
+    
     file = request.files['file']
+    
     if file.filename == '':
         return jsonify({'error': 'No selected file'})
+    
     if file:
-        filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+        # Determine folder path: user-specific or general folder
+        if current_user:
+            user_folder = os.path.join(app.config['UPLOAD_FOLDER'], current_user.username)
+        else:
+            user_folder = os.path.join(app.config['UPLOAD_FOLDER'], 'general')
+
+        # Ensure the folder exists
+        os.makedirs(user_folder, exist_ok=True)  # Create folder if it doesn't exist
+        
+        # Save the file in the appropriate folder
+        filename = os.path.join(user_folder, file.filename)
         file.save(filename)
+        
         return jsonify({'message': 'File Uploaded'})
+    
     return jsonify({'error': 'File upload failed'})
 
 
-file_list  = []
-@app.route('/upload_file')
-@admin_only
+file_list = []
+
+@app.route('/uploaded_files')
 def uploaded_files():
     print("--------------uploaded_files route is running---------")
-    global file_list
+    global file_list, current_user
     file_list = []
-    folder_path = './uploads'
+    
+    # Determine folder path: user-specific or general folder
+    if current_user:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], current_user.username)
+    else:
+        folder_path = os.path.join(app.config['UPLOAD_FOLDER'], 'general')
+    
+    # Check if folder exists, if not return an empty list message
+    if not os.path.exists(folder_path):
+        return jsonify({'message': 'No files uploaded'})
+    
+    # List files in the folder
     items = os.listdir(folder_path)
     file_count = 0
     for item in items:
-        file_count += 1
         item_path = os.path.join(folder_path, item)
         if os.path.isfile(item_path):
-            file_size = os.path.getsize(item_path) 
-            file_size_mb = round(file_size / (1024 * 1024) ,2)
-        file_list.append(CurrentFile(file_count,item,"N/A",file_size_mb))
+            file_count += 1
+            file_size = os.path.getsize(item_path)
+            file_size_mb = round(file_size / (1024 * 1024), 2)
+            # Assuming CurrentFile is a class you're using to represent files
+            file_list.append(CurrentFile(file_count, item, "N/A", file_size_mb))
     
-    return render_template('uploaded_files.html',file_list = file_list)
+    return render_template('uploaded_files.html', file_list=file_list)
     
     
 @app.route('/download/<int:file_id>')
@@ -443,8 +495,6 @@ def delete_file(file_id):
     os.remove(file_path)
     return redirect(url_for('uploaded_files'))
 
-#111
-
 @app.route('/change_password_inputs',methods = ['GET','POST'])
 def change_password_inputs():
     print("--------------change_password_inputs route is running---------")
@@ -460,15 +510,12 @@ def change_password_inputs():
                                    show_login_form =show_login_form,
                                    open_otp_form = 0,
                                    choose_password = 1) 
-            
         else:
             return render_template('index.html',
                                    show_login_form =show_login_form,
                                    open_otp_form = 1,
                                    wrong_otp = 1) 
-            
     else:
-        
         if("@" not in forgot_password_email_username ):
             user_email = database.session.execute(database.select(User).filter(User.username == forgot_password_email_username)).scalar()
             forgot_password_email_username = user_email.email
@@ -483,9 +530,6 @@ def change_password():
     print("--------------change_password route is running---------")
     global forgot_password_email_username,current_user,open_otp_form,show_login_form,global_otp,choose_password,wrong_otp
     chosen_username = None
-    
-    #RESET GLOBAL VARIABLES
-    
     if (request.method == "POST"):
         new_password = request.form.get('change_password_input1')
         
@@ -495,6 +539,7 @@ def change_password():
         database.session.commit()
         current_user = chosen_username
         login_user(chosen_username)
+    #RESET GLOBAL VARIABLES
     forgot_password_email_username = None
     open_otp_form = 0
     show_login_form =  None
@@ -502,71 +547,73 @@ def change_password():
     choose_password = 0
     wrong_otp = 0
     return render_template('index.html')
-# END1
+
+
+
+# #END1
 # import pandas as pd        
 # def read_csv_to_dict_list(csv_file_path):
-#     df = pd.read_csv(csv_file_path)
+#      df = pd.read_csv(csv_file_path)
     
-#     data_list = df.to_dict(orient='records')
+#      data_list = df.to_dict(orient='records')
     
-#     return data_list
+#      return data_list
 # @app.route("/insert_data")
 # def insert_data():
-    
-#     # EXECUTE THIS QUERY
-#     # -- Step 0: Drop the temp table if it already exists
-#     # DROP TABLE IF EXISTS temp_ids;
+#      # EXECUTE THIS QUERY
+     
+#      # -- Step 0: Drop the temp table if it already exists
+#      # DROP TABLE IF EXISTS temp_ids;
 
-#     # -- Step 1: Create a temporary table for random IDs
-#     # CREATE TEMP TABLE temp_ids (new_id INTEGER UNIQUE);
+#      # -- Step 1: Create a temporary table for random IDs
+#      # CREATE TEMP TABLE temp_ids (new_id INTEGER UNIQUE);
 
-#     # -- Step 2: Insert random unique 3-digit IDs into the temporary table
-#     # INSERT INTO temp_ids (new_id)
-#     # SELECT DISTINCT 100 + ABS(RANDOM()) % 900
-#     # FROM content
-#     # LIMIT (SELECT COUNT(*) FROM content);
+#      # -- Step 2: Insert random unique 3-digit IDs into the temporary table
+#      # INSERT INTO temp_ids (new_id)
+#      # SELECT DISTINCT 100 + ABS(RANDOM()) % 900
+#      # FROM content
+#      # LIMIT (SELECT COUNT(*) FROM content);
 
-#     # -- Step 3: Update the original table with the new random IDs
-#     # WITH numbered_content AS (
-#     #   SELECT id, ROW_NUMBER() OVER () AS row_num
-#     #   FROM content
-#     # ),
-#     # numbered_ids AS (
-#     #   SELECT new_id, ROW_NUMBER() OVER () AS row_num
-#     #   FROM temp_ids
-#     # )
-#     # UPDATE content
-#     # SET id = (SELECT new_id FROM numbered_ids WHERE numbered_ids.row_num = numbered_content.row_num)
-#     # FROM numbered_content
-#     # WHERE content.id = numbered_content.id;
+#      # -- Step 3: Update the original table with the new random IDs
+#      # WITH numbered_content AS (
+#      #   SELECT id, ROW_NUMBER() OVER () AS row_num
+#      #   FROM content
+#      # ),
+#      # numbered_ids AS (
+#      #   SELECT new_id, ROW_NUMBER() OVER () AS row_num
+#      #   FROM temp_ids
+#      # )
+#      # UPDATE content
+#      # SET id = (SELECT new_id FROM numbered_ids WHERE numbered_ids.row_num = numbered_content.row_num)
+#      # FROM numbered_content
+#      # WHERE content.id = numbered_content.id;
 
-#     # -- Step 4: Drop the temporary table
-#     # DROP TABLE temp_ids;
+#      # -- Step 4: Drop the temporary table
+#      # DROP TABLE temp_ids;
 
-#     print("--------------insert_data route is running---------")
-#     all_content = database.session.execute(database.select(Content)).scalars().all()
-#     data_list = read_csv_to_dict_list("output.csv")
-#     count  = 0
-#     print(all_content)
-#     for data in data_list :
-        
+#      print("--------------insert_data route is running---------")
+#      all_content = database.session.execute(database.select(Content)).scalars().all()
+#      data_list = read_csv_to_dict_list("output.csv")
+#      count  = 0
+#      print(all_content)
+#      for data in data_list :
 #         try:
 #             all_content[count].id = data['id'] + 100
 #             all_content[count].content = data['content']
 #             all_content[count].time = data['time']
+#             all_content[count].user_id = 0
 #             database.session.commit()
 #         except:
 #             new_content = Content(
 #                 content = data['content'],
-#                 time = data['time']
+#                 time = data['time'],
+#                 user_id = 0
 #             )
-            
 #             database.session.add(new_content)
 #             database.session.commit()
-#         count += 1
 #         print(f"------- INSERTION ITERATION {count}  -------")
-        
-#     return "<h1>DATA INSERTED SUCCESSFULLY</H1>"
+#         count += 1
+#      return "<h1>DATA INSERTED SUCCESSFULLY</H1>"
 
 if __name__ == "__main__":
     app.run(debug=True,host='0.0.0.0', port=5000)

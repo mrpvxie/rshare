@@ -26,8 +26,8 @@
       </div>
 
       {% if current_user %}
-      <a href="{{ url_for('register') }}"
-        ><button class="credential_button">My profile</button></a
+      <a href="{{ url_for('my_profile') }}"
+        ><button class="credential_button">Your Data</button></a
       >
       <a href="{{ url_for('logout') }}"
         ><button class="credential_button">Log Out</button></a
@@ -187,7 +187,7 @@
         <form method="POST" action="{{url_for('change_password')}}">
           <div class="login-form-group">
             <input
-              type="password"
+              type="text"
               id="change_password_input1"
               placeholder="CHOOSE NEW PASSWORD"
               required

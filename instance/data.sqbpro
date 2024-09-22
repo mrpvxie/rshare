@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><sqlb_project><db path="G:\My Drive\WORK\MINE\Python\my projects\RSHARE\instance\data.db" readonly="0" foreign_keys="1" case_sensitive_like="0" temp_store="0" wal_autocheckpoint="1000" synchronous="2"/><attached/><window><main_tabs open="structure browser pragmas query" current="0"/></window><tab_structure><column_width id="0" width="300"/><column_width id="1" width="0"/><column_width id="2" width="100"/><column_width id="3" width="1152"/><column_width id="4" width="0"/><expanded_item id="0" parent="1"/><expanded_item id="1" parent="1"/><expanded_item id="2" parent="1"/><expanded_item id="3" parent="1"/></tab_structure><tab_browse><current_table name="4,7:maincontent"/><default_encoding codec=""/><browse_table_settings><table schema="main" name="content" show_row_id="0" encoding="" plot_x_axis="" unlock_view_pk="_rowid_"><sort/><column_widths><column index="1" value="60"/><column index="2" value="300"/><column index="3" value="167"/><column index="4" value="60"/></column_widths><filter_values/><conditional_formats/><row_id_formats/><display_formats/><hidden_columns/><plot_y_axes/><global_filter/></table></browse_table_settings></tab_browse><tab_sql><sql name="SQL 1">-- Step 0: Drop the temp table if it already exists
+DROP TABLE IF EXISTS temp_ids;
+
+-- Step 1: Create a temporary table for random IDs
+CREATE TEMP TABLE temp_ids (new_id INTEGER UNIQUE);
+
+-- Step 2: Insert random unique 3-digit IDs into the temporary table
+INSERT INTO temp_ids (new_id)
+SELECT DISTINCT 100 + ABS(RANDOM()) % 900
+FROM content
+LIMIT (SELECT COUNT(*) FROM content);
+
+-- Step 3: Update the original table with the new random IDs
+WITH numbered_content AS (
+SELECT id, ROW_NUMBER() OVER () AS row_num
+FROM content
+),
+numbered_ids AS (
+SELECT new_id, ROW_NUMBER() OVER () AS row_num
+FROM temp_ids
+)
+UPDATE content
+SET id = (SELECT new_id FROM numbered_ids WHERE numbered_ids.row_num = numbered_content.row_num)
+FROM numbered_content
+WHERE content.id = numbered_content.id;
+
+-- Step 4: Drop the temporary table
+DROP TABLE temp_ids;</sql><current_tab id="0"/></tab_sql></sqlb_project>
