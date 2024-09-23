@@ -72,6 +72,7 @@
                 >
                   <i class="fa fa-trash"></i>
                 </button>
+                {% if on_general_files_upload %}
                 <a href="{{url_for('download', file_id= file.id)}}">
                   <button class="small_upload_button">
                     <img
@@ -80,6 +81,16 @@
                     />
                   </button>
                 </a>
+                {% else %}
+                <a href="{{url_for('user_download', file_id= file.id)}}">
+                  <button class="small_upload_button">
+                    <img
+                      src="../static/images/download.png"
+                      id="table_upload_image"
+                    />
+                  </button>
+                </a>
+                {% endif %}
               </td>
             </tr>
             {% endfor %}

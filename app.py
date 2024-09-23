@@ -26,6 +26,7 @@ global_otp = None
 choose_password = 0
 wrong_otp = 0
 user_content_page = None
+on_general_files_upload = 0
 #1FUNCTIONS
 def send_mail(receiver,body,sender = "killbusyness@gmail.com"):
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -185,7 +186,8 @@ def common_variable():
                 open_otp_form = 0,
                 forgot_password_email_username =forgot_password_email_username , 
                 show_login_form = show_login_form,
-                wrong_otp = 0)
+                wrong_otp = 0,
+                on_general_files_upload = 0)
 
 @app.route("/")
 def index():
@@ -250,14 +252,15 @@ def table_data():
             'time': content.time  
         } for content in content_data
     ]
-    return render_template("table_data.html", data = json_data)
+    return render_template("table_data.html", data = json_data )
 
 
 @app.route("/check_for_admin")
 def check_for_admin():
     print("--------------check_for_admin route is running---------")
-    global is_admin
+    global is_admin ,on_general_files_upload 
     is_admin = 1
+    on_general_files_upload = 1
     return redirect(url_for("table_data")) 
 
 @app.route("/delete_content/<int:content_id>")
@@ -273,9 +276,9 @@ def delete_content(content_id):
 @app.route("/full_content/<int:content_id>",methods = ['POST','GET'])
 def full_content(content_id):
     print("--------------full_content route is running---------")
-    global current_page,small_upload_button_page
+    global current_page,small_upload_button_page,current_user
     small_upload_button_page = "full_content"
-    current_page = "table_data"
+    current_page = "my_profile" if current_user else "table_data"
     chosen_content = database.session.execute(database.select(Content).where(Content.id == content_id)).scalar()
     return render_template("full_content.html",content_data = chosen_content)
 
@@ -283,6 +286,8 @@ def full_content(content_id):
 @app.route("/back")
 def back_button():
     print("--------------back_button route is running---------")
+    global on_general_files_upload,current_page
+    on_general_files_upload = 0
     return redirect(url_for(current_page))
 
 @app.route('/get_json_data_content', methods=['GET'])
@@ -406,7 +411,14 @@ def my_profile():
     current_page = "index"
     user_content_page = "my_profile"
     table_contents = database.session.execute(database.select(Content).where(Content.user_id == current_user.id)).scalars().all()
-    return render_template('user_data.html',table_contents = table_contents)
+    json_data = [
+        {
+            'id': content.id,
+            'content': remove_tags(content.content),
+            'time': content.time  
+        } for content in table_contents
+    ]
+    return render_template('user_data.html',table_contents = json_data)
 
 
 @app.route('/logout')
@@ -471,7 +483,7 @@ def general_uploaded_files():
             file_size = os.path.getsize(item_path)
             file_size_mb = round(file_size / (1024 * 1024), 2)
             file_list.append(CurrentFile(file_count, item, "N/A", file_size_mb))
-    return render_template('uploaded_files.html', file_list=file_list)
+    return render_template('uploaded_files.html', file_list=file_list , on_general_files_upload = 1 )
 
 @app.route('/uploaded_files')
 def uploaded_files():
@@ -501,12 +513,22 @@ def uploaded_files():
 def download(file_id):
     print("--------------download route is running---------")
     global file_list
-    file_path = f"./uploads/{get_file(file_id,file_list)}" 
+    file_path = f"./uploads/general/{get_file(file_id,file_list)}" 
     try:
         return send_file(file_path, as_attachment=True)
     except Exception as e:
         return str(e)    
-    
+
+@app.route('/user_download/<int:file_id>')
+def user_download(file_id):
+    print("--------------user_download route is running---------")
+    global file_list, current_user
+    file_path = f"./uploads/{current_user.username}/{get_file(file_id,file_list)}" 
+    try:
+        return send_file(file_path, as_attachment=True)
+    except Exception as e:
+        return str(e)    
+
 @app.route('/delete_file/<int:file_id>')
 def delete_file(file_id):
     print("--------------delete_file route is running---------")
@@ -652,4 +674,4 @@ def admin_access():
 #      return "<h1>DATA INSERTED SUCCESSFULLY</H1>"
 
 if __name__ == "__main__":
-    app.run(debug=True,host='0.0.0.0', port=5000)
+    app.run(debug=True)

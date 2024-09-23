@@ -45,7 +45,7 @@ if (html_width < 800) {
   });
 }
 
-let fixed_height = 750;
+let fixed_height = html_body.getBoundingClientRect().height - 300;
 
 const body_width = document.querySelector("body").getBoundingClientRect().width;
 

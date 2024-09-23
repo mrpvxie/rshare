@@ -8,6 +8,7 @@ file_selector.onclick = () => file_selector_input.click();
 
 file_selector_input.onchange = () => {
   [...file_selector_input.files].forEach((file) => {
+    console.log(file);
     if (check_file_validation(file.type)) {
       console.log(file);
       upload_file(file);
@@ -15,15 +16,19 @@ file_selector_input.onchange = () => {
   });
 };
 
+// check_file_validation = (file_type) => {
+//   const file_format = file_type.split("/")[0];
+//   if (
+//     file_format == "image" ||
+//     file_format == "video" ||
+//     file_type == "application/pdf"
+//   ) {
+//     return true;
+//   }
+// };
+
 check_file_validation = (file_type) => {
-  const file_format = file_type.split("/")[0];
-  if (
-    file_format == "image" ||
-    file_format == "video" ||
-    file_type == "application/pdf"
-  ) {
-    return true;
-  }
+  return true;
 };
 
 drop_here.ondragover = (event) => event.preventDefault();
@@ -114,5 +119,13 @@ select_icon = (file) => {
     file.type.split("/")[0] == "application"
       ? "application"
       : file.type.split("/")[0];
-  return "../static/images/" + splitType + ".png";
+  if (
+    splitType == "image" ||
+    splitType == "application" ||
+    splitType == "video"
+  ) {
+    return "../static/images/" + splitType + ".png";
+  } else {
+    return "../static/images/unknown_document.png";
+  }
 };
