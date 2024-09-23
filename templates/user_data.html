@@ -10,7 +10,7 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
     />
-    <link rel="stylesheet" href="../static/css/table_styles.css" />
+    <link rel="stylesheet" href="../static/css/user_table_styles.css" />
   </head>
   <body>
     <div class="container">
@@ -55,7 +55,8 @@
               </td>
 
               <td data-label="content" class="content_column table_content">
-                <a href="{{ url_for('full_content',content_id = user_data.id) }}"
+                <a
+                  href="{{ url_for('full_content',content_id = user_data.id) }}"
                   ><br /><span class="content_text"
                     >{{ user_data.content[:100] }}</span
                   ></a
@@ -90,7 +91,7 @@
             src="../static/images/back_button.png"
             class="back_button_image"
         /></a>
-        <a href="{{ url_for('uploaded_files') }} ">
+        <a href="{{ url_for('general_uploaded_files') }} ">
           <button type="submit" class="submit file_content_button">
             FILES
           </button></a

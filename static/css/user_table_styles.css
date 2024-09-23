@@ -1,0 +1,381 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  cursor: default;
+}
+
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+body {
+  background: #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+.container {
+  /* max-width: 1440px; */
+  width: 100vw;
+  background: #fff;
+  box-shadow: 2px 5px 10px rgba(0, 0, 0, 0.5);
+}
+.container h2 {
+  padding: 2rem 1rem;
+  text-align: center;
+  /* background: #e74c3c; */
+  /* color: #fff; */
+  font-size: 2.5rem;
+}
+.tbl {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 5%;
+}
+.tbl thead {
+  background: #007bff;
+  color: #fff;
+}
+.tbl thead tr th {
+  font-size: 0.9rem;
+  padding: 0.8rem;
+  letter-spacing: 0.2rem;
+  vertical-align: top;
+  border: 1px solid #aab7b8;
+}
+.tbl tbody tr td {
+  font-size: 1rem;
+  letter-spacing: 0.2rem;
+  font-weight: normal;
+  text-align: center;
+  border: 1px solid #aab7b8;
+  padding: 0.8rem;
+}
+.tbl tr:nth-child(even) {
+  background: #c8eafa;
+  /* border: 2px solid ; */
+  transition: all 0.3s ease-in;
+  cursor: pointer;
+}
+.tbl tr:hover td {
+  background: #aad1fa;
+  color: #000;
+  transition: all 0.3s ease-in;
+  cursor: pointer;
+}
+.tbl button {
+  display: inline-block;
+  border: none;
+  margin: 0 auto;
+  padding: 0.4rem;
+  border-radius: 1px;
+  outline: none;
+  cursor: pointer;
+}
+.btn_trash {
+  background: #e74c3c;
+  color: #fff;
+}
+.btn_edit {
+  color: #fff;
+  background: #1e8449;
+}
+
+.back_button_image {
+  display: block;
+  position: fixed;
+  height: 60px;
+  aspect-ratio: 1/1;
+  top: 92%;
+  right: 1%;
+}
+@media (max-width: 768px) {
+  .id {
+    width: 50px;
+  }
+  .tbl thead {
+    display: none;
+  }
+  .tbl tr,
+  .tbl td {
+    display: block;
+    width: 100%;
+  }
+  .tbl tr {
+    margin-bottom: 1rem;
+  }
+  .tbl tbody tr td {
+    text-align: right;
+    position: relative;
+    transition: all 0.2s ease-in;
+    font-weight: bold;
+  }
+  .tbl td::before {
+    content: attr(data-label);
+    position: absolute;
+    left: 0;
+    width: 50%;
+    padding-left: 1.2rem;
+    text-align: left;
+  }
+  .tbl tbody tr td:hover {
+    background: #aad1fa;
+    color: #000;
+  }
+  .back_button_image {
+    display: block;
+    height: 55px;
+    aspect-ratio: 1/1;
+    z-index: 10;
+    right: 3%;
+    top: 91%;
+    position: fixed;
+  }
+  .content_text {
+    font-weight: 200;
+  }
+}
+
+/* MODAL_CODE */
+/* Modal Container */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 500; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgba(0, 0, 0, 0.4); /* Black background with opacity */
+  display: flex; /* Flexbox for centering */
+  align-items: center; /* Vertically center */
+  justify-content: center; /* Horizontally center */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  padding: 20px;
+  border: 1px solid #888;
+  border-radius: 8px; /* Rounded corners */
+  width: 40%; /* Default width for larger screens */
+  max-width: 400px; /* Maximum width for larger screens */
+  position: relative;
+  top: 40%;
+  margin: 0 auto;
+  z-index: 100;
+}
+
+/* Close Button */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 20px;
+  color: #aaa;
+  font-size: 24px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+}
+
+/* Button Styles */
+.modal-buttons {
+  /* border: 2px solid black; */
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.modal-buttons a {
+  text-decoration: none; /* Remove underline from link */
+}
+
+.modal-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  color: white;
+}
+
+.btn-yes {
+  background-color: #4caf50; /* Green */
+}
+
+.btn-no {
+  background-color: #f44336; /* Red */
+}
+
+/* Responsive Adjustments */
+@media screen and (max-width: 600px) {
+  .container {
+    width: 1440px;
+  }
+  .modal-content {
+    width: 80%; /* Adjust width for smaller screens */
+  }
+
+  .close {
+    font-size: 20px; /* Smaller close button on small screens */
+    right: 10px;
+  }
+
+  .modal-buttons {
+    /* border: 2px solid black; */
+    flex-direction: column;
+    align-items: flex-end;
+    display: block;
+    margin-top: 0;
+  }
+  .delete_yes_button {
+    margin-bottom: 5%;
+  }
+  .btn-no {
+    margin-top: 20px;
+  }
+  .modal-buttons button {
+    width: 100%; /* Full-width buttons on small screens */
+    margin-bottom: 10px; /* Space between buttons */
+  }
+
+  .modal-buttons button:last-child {
+    margin-bottom: 0; /* No margin for the last button */
+  }
+  .btn-yes {
+    width: 100%;
+  }
+}
+
+/* SEARCH INPUT CSS */
+
+.search-container {
+  background: white;
+  z-index: 50;
+  top: 92%;
+  left: 2%;
+  position: fixed;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  border: 2px solid #007bff;
+  border-radius: 50px;
+  padding: 10px 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.search-container input {
+  border: none;
+  outline: none;
+  font-size: 16px;
+  flex: 1;
+  padding: 5px 10px;
+}
+
+.search-container input::placeholder {
+  color: #999;
+}
+
+.search-container button {
+  background: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  color: #007bff;
+  font-size: 18px;
+}
+
+.search-container button:hover {
+  color: #0056b3;
+}
+
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 300px;
+    padding: 8px 15px;
+  }
+
+  .search-container input {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-container {
+    max-width: 250px;
+    padding: 6px 12px;
+  }
+
+  .search-container input {
+    font-size: 12px;
+  }
+}
+
+.table_row {
+  background: #dad9d9;
+}
+
+.table_delete {
+  display: flex;
+  justify-content: space-around;
+}
+
+.small_upload_button {
+  background: transparent;
+}
+
+#table_upload_image {
+  height: 30px;
+}
+
+.submit {
+  background-color: #007bff;
+  color: white;
+  padding: 15px 30px;
+  font-size: 18px;
+  font-weight: bold;
+  border: 1px solid white;
+  border-radius: 10px;
+  outline: none;
+  cursor: pointer;
+  overflow: hidden;
+  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
+  box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
+}
+
+.file_content_button {
+  position: fixed;
+  bottom: 2%;
+  left: 50%;
+}
+
+@media (max-width: 768px) {
+  .file_content_button {
+    bottom: 90%;
+    top: 0%;
+    left: 40%;
+    height: 5%;
+    font-size: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
