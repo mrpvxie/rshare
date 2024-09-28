@@ -17,20 +17,20 @@
 
     <link rel="stylesheet" href="../static/css/styles.css" />
   </head>
-  <body>
+  <body class  = "gradient-container">
     
       <form class="full_content_form" method="POST" action="{{url_for('edit_content',content_id=content_data.id)}}">
         <textarea id="summernote2" name="summernote2"></textarea>
-        <button type="submit" class="submit edit_button1">SAVE CHANGES</button>
-        <button type="submit" class="submit edit_button2"><img src="../static/images/save.png" class ="save_change_button" ></button>
+        <button type="submit" class="submit edit_button1 animated-button"><span>SAVE CHANGES</span></button>
+        <button type="submit" class="submit edit_button2 animated-button"><span > <img src="../static/images/save.png" class ="save_change_button" ></span></button>
       </form>
     </div>
       <a href="{{url_for('small_upload', content_id= content_data.id)}}" class = "small_upload_pc">
-            <button class="submit upload_button_full_content">UPLOAD</button>
+            <button class="submit animated-button upload_button"><span>UPLOAD</span></button>
       </a>
 
       <a href="{{url_for('small_upload', content_id= content_data.id)}}" class = "small_upload_phone">
-            <button class="submit upload_button_full_content"><img src="../static/images/upload_up_arrow.png" class ="up_arrow"></button>
+            <button class="submit  image_button2"><span><img src="../static/images/upload_up_arrow.png" class ="up_arrow"></span></button>
       </a>
 
      
@@ -48,7 +48,7 @@
         var content = `{{content_data.content |safe}}`;
         $("#summernote2").summernote("code", content);
       });
-      let fixed_height = 750;
+      let fixed_height = document.querySelector('body').getBoundingClientRect().height -120;
       document.addEventListener("DOMContentLoaded", function () {
         var summernote2 = document.getElementById("summernote2");
         if (summernote2) {
@@ -59,6 +59,8 @@
           });
         }
       });
+
+
     </script>
   </body>
 </html>

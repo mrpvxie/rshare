@@ -7,6 +7,29 @@
   font-family: "Poppins", sans-serif;
 }
 
+.gradient-container {
+  background: linear-gradient(
+    45deg,
+    #00b7ff,
+    #00b7ff 25%,
+    #0033ff 50%,
+    #00b7ff 75%
+  );
+  background-size: 400% 400%;
+  animation: gradientAnimation 7s ease infinite;
+}
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
 a {
   text-decoration: none;
   color: inherit;
@@ -226,13 +249,12 @@ body {
 
 /* Responsive Adjustments */
 @media screen and (max-width: 600px) {
-  .container {
-    width: 1440px;
-  }
   .modal-content {
     width: 80%; /* Adjust width for smaller screens */
   }
-
+  .table_body {
+    width: 100%;
+  }
   .close {
     font-size: 20px; /* Smaller close button on small screens */
     right: 10px;

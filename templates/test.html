@@ -2,205 +2,176 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ALL CONTENT</title>
-    <link rel="icon" type="image/x-icon" href="../static/images/share.png" />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
-    />
-    <link rel="stylesheet" href="../static/css/table_styles.css" />
+    <title>Animated Modal</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Arial", sans-serif;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background-color: #222;
+      }
+
+      .open-modal-button {
+        padding: 15px 30px;
+        background-color: #00b7ff;
+        border: none;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        color: white;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.3s ease;
+      }
+
+      .open-modal-button:hover {
+        background-color: #007bff;
+        transform: translateY(-5px);
+      }
+
+      .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.8);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        visibility: hidden;
+        opacity: 0;
+        transition: visibility 0s, opacity 0.3s;
+        z-index: 1000;
+      }
+
+      .modal-content {
+        position: relative;
+        width: 400px;
+        padding: 30px;
+        background-color: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        animation: modalAppear 0.7s ease forwards,
+          modalFloating 4s ease-in-out infinite;
+        transform: translateY(50px);
+        opacity: 0;
+      }
+
+      @keyframes modalAppear {
+        0% {
+          opacity: 0;
+          transform: scale(0.8) translateY(50px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
+
+      @keyframes modalFloating {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-10px);
+        }
+      }
+
+      .modal-content h2 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .modal-content p {
+        font-size: 16px;
+        color: #555;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .close-modal-button {
+        padding: 10px 25px;
+        background-color: #ff6b6b;
+        border: none;
+        border-radius: 30px;
+        font-size: 16px;
+        color: white;
+        cursor: pointer;
+        display: block;
+        margin: 0 auto;
+        transition: background 0.3s ease;
+      }
+
+      .close-modal-button:hover {
+        background-color: #ff5252;
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        font-size: 18px;
+        color: #333;
+        cursor: pointer;
+        transition: color 0.3s ease;
+      }
+
+      .modal-close:hover {
+        color: #ff5252;
+      }
+
+      /* Show modal when active */
+      .modal-overlay.active {
+        visibility: visible;
+        opacity: 1;
+      }
+    </style>
   </head>
   <body>
-    <div class="container">
-      <div class="tbl_content">
-        <div class="search-container">
-          <input type="text" class="search_input" placeholder="Search..." />
-        </div>
+    <button class="open-modal-button">Open Modal</button>
 
-        <table class="tbl">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>CONTENT</th>
-              <th>DATE</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody class="table_body">
-            {% for cont in data %}
-            <tr>
-              <div
-                id="modal_no_{{ cont.id }}"
-                class="modal"
-                style="display: none"
-              >
-                <div class="modal-content">
-                  <span class="close">X</span>
-                  <p>Are you sure you want to delete this item?</p>
-                  <!--222-->
-                  <div class="modal-buttons">
-                    <a
-                      href="{{url_for('delete_content', content_id= cont.id)}}"
-                    >
-                      <button class="btn-yes">Yes</button>
-                    </a>
-                    <button class="btn-no">No</button>
-                  </div>
-                </div>
-              </div>
-              <td data-label="id" class="table_id">
-                <span class="content_text">{{ cont.id }}</span>
-              </td>
-
-              <td data-label="content" class="content_column table_content">
-                <a href="{{ url_for('full_content',content_id = cont.id) }}"
-                  ><br /><span class="content_text"
-                    >{{ cont.content[:100] }}</span
-                  ></a
-                >
-              </td>
-              <td data-label="time" class="table_time">
-                <span class="content_text"><br />{{ cont.time }}</span>
-              </td>
-
-              <td id="deleteBtn{{ cont.id }}" class="table_delete">
-                <button
-                  class="btn_trash delete_button"
-                  data-label="modal_no_{{ cont.id }}"
-                >
-                  <i class="fa fa-trash"></i>
-                </button>
-                <a href="{{url_for('small_upload', content_id= cont.id)}}">
-                  <button class="small_upload_button">
-                    <img
-                      src="../static/images/table_upload.png"
-                      id="table_upload_image"
-                    />
-                  </button>
-                </a>
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-        <a href="{{ url_for('back_button') }} "
-          ><img
-            src="../static/images/back_button.png"
-            class="back_button_image"
-        /></a>
-        <a href="{{ url_for('uploaded_files') }} ">
-          <button type="submit" class="submit file_content_button">
-            FILES
-          </button></a
-        >
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal-content">
+        <span class="modal-close" id="close-icon">&times;</span>
+        <h2>Beautiful Animated Modal</h2>
+        <p>This is an example of a very animated and attractive modal.</p>
+        <button class="close-modal-button" id="close-button">Close</button>
       </div>
     </div>
 
     <script>
-      const table_row_container = document.querySelector(".table_body");
+      const openModalButton = document.querySelector(".open-modal-button");
+      const modalOverlay = document.getElementById("modal-overlay");
+      const closeModalButton = document.getElementById("close-button");
+      const closeIcon = document.getElementById("close-icon");
 
-      function add_delete_event_listner() {
-        const all_delete_buttons = document.querySelectorAll(".delete_button");
-        all_delete_buttons.forEach((currentItem) => {
-          currentItem.addEventListener("click", () => {
-            const selected_modal = currentItem.getAttribute("data-label");
-            const modal_to_select = document.getElementById(
-              `${selected_modal}`
-            );
-            const no_button = modal_to_select.querySelector(".btn-no");
-            const cross_button = modal_to_select.querySelector(".close");
-
-            modal_to_select.style.display = "block";
-
-            no_button.addEventListener("click", () => {
-              modal_to_select.style.display = "none";
-            });
-            cross_button.addEventListener("click", () => {
-              modal_to_select.style.display = "none";
-            });
-          });
-        });
-      }
-      add_delete_event_listner();
-      let content_data = [];
-      let count = 0;
-      let id = document.querySelectorAll(".table_id");
-      let content = document.querySelectorAll(".table_content");
-      let time = document.querySelectorAll(".table_time");
-
-      id.forEach(() => {
-        content_data.push({
-          id: id[count].textContent.trim(),
-          content: content[count].textContent.trim(),
-          time: time[count].textContent.trim(),
-        });
-        count++;
+      openModalButton.addEventListener("click", () => {
+        modalOverlay.classList.add("active");
       });
 
-      function insert_data(data_array) {
-        const row_data = data_array
-          .map((currentItem) => {
-            return `
-                  <tr>
-                        <div id="modal_no_${currentItem.id}" class="modal" style="display:none">
-                            <div class="modal-content">
-                                <span class="close">&times;</span>
-                                <p>Are you sure you want to delete this item?</p>
-                                <div class="modal-buttons">
-                                    <a href="/delete_content/${currentItem.id}">
-                                        <button class="btn-yes">Yes</button>
-                                    </a>
-                                    <button class="btn-no">No</button>
-                                </div>
-                            </div>
-                        </div>
-                      <td data-label="id" class="table_id"><span class="content_text">${currentItem.id}</span></td>
+      closeModalButton.addEventListener("click", () => {
+        modalOverlay.classList.remove("active");
+      });
 
-                      <td data-label="content" class="content_column table_content">
-                        <a href="/full_content/${currentItem.id}">
-                          <br><span class="content_text">${currentItem.content}</span>
-                        </a>
-                      </td>
-                      <td data-label="time" class="table_time"><span class="content_text"><br>${currentItem.time}</span></td>
+      closeIcon.addEventListener("click", () => {
+        modalOverlay.classList.remove("active");
+      });
 
-                      <td id="deleteBtn${currentItem.id}" class="table_delete">
-                          <button class="btn_trash delete_button" data-label="modal_no_${currentItem.id}">
-                              <i class="fa fa-trash"></i>
-                          </button>
-                          <a href="/small_upload/${currentItem.id}">
-                            <button class="small_upload_button">
-                              <img
-                                src="../static/images/table_upload.png"
-                                id="table_upload_image"
-                              />
-                            </button>
-                          </a>
-                      </td>
-                  </tr>`;
-          })
-          .join(" ");
-        table_row_container.innerHTML = row_data;
-      }
-
-      const search_input = document.querySelector(".search_input");
-
-      search_input.addEventListener("input", function () {
-        const searchValue = search_input.value.toLowerCase().trim();
-        if (searchValue === "") {
-          insert_data(content_data);
-          add_delete_event_listner();
-        } else {
-          const filtered_products = content_data.filter(function (currentItem) {
-            return currentItem.content.toLowerCase().includes(searchValue);
-          });
-          if (filtered_products.length === 0) {
-            insert_data([]);
-          } else {
-            insert_data(filtered_products);
-            add_delete_event_listner();
-          }
+      // Close the modal when clicking outside of it
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) {
+          modalOverlay.classList.remove("active");
         }
       });
     </script>

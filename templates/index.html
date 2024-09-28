@@ -18,23 +18,31 @@
     <link rel="stylesheet" href="../static/css/drag_drop_file.css" />
     <link rel="stylesheet" href="../static/css/styles.css" />
   </head>
-  <body>
-    <div class="top">
+  <body class="gradient-container">
+    <div class="top gradient-container">
       <div>
         <span id="share_button">SHARE</span>
       </div>
 
       {% if current_user %}
       <a href="{{ url_for('my_profile') }}"
-        ><button class="credential_button">Your Data</button></a
+        ><button class="credential_button blue-gradient-button2">
+          <span>Your Data</span>
+        </button></a
       >
       <a href="{{ url_for('logout') }}"
-        ><button class="credential_button">Log Out</button></a
+        ><button class="credential_button blue-gradient-button2">
+          <span>Log Out</span>
+        </button></a
       >
       {% else %}
-      <button class="credential_button login_button">Login</button>
+      <button class="credential_button login_button blue-gradient-button">
+        <span> Login</span>
+      </button>
       <a href="{{ url_for('register') }}"
-        ><button class="credential_button">Register</button></a
+        ><button class="credential_button blue-gradient-button">
+          <span>Register</span>
+        </button></a
       >
       {% endif %}
     </div>
@@ -59,16 +67,22 @@
     <div class="all_container">
       <form class="right" method="POST" action="{{ url_for('upload') }}">
         <textarea id="summernote1" name="summernote1"></textarea>
-        <button type="submit" class="submit upload_button">UPLOAD</button>
+        <button type="submit" class="submit upload_button animated-button">
+          <span>UPLOAD</span>
+        </button>
       </form>
 
       <form class="left" method="POST" action="{{url_for('receive')}}">
         <textarea id="summernote2" name="summernote2"></textarea>
-        <button type="submit" class="submit receive_button">RECEIVE</button>
+        <button type="submit" class="submit receive_button animated-button">
+          <span>RECEIVE</span>
+        </button>
       </form>
     </div>
 
-    <button class="send_doc" id="document_button1">Send document</button>
+    <button class="send_doc animated-button" id="document_button1">
+      <span>Send document</span>
+    </button>
     <button class="send_doc" id="document_button2">Send document</button>
 
     <div class="drag_drop_modal_bg">
@@ -76,7 +90,7 @@
         <img src="../static/images/cross.png" class="close_button" />
         <div class="head_container">
           <h1>UPLOAD FILES</h1>
-          <p>PDF,Images & videos are allowed</p>
+          <p>Upload any document</p>
         </div>
 
         <div class="drop_here">

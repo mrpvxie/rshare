@@ -2,10 +2,99 @@
   --height_of_top: 5vh;
 }
 
+.gradient-container {
+  background: linear-gradient(
+    45deg,
+    #00b7ff,
+    #00b7ff 25%,
+    #0033ff 50%,
+    #00b7ff 75%
+  );
+  background-size: 400% 400%;
+  animation: gradientAnimation 7s ease infinite;
+}
+@keyframes gradientAnimation {
+  0% {
+    background-position: 0% 0%;
+  }
+  50% {
+    background-position: 100% 100%;
+  }
+  100% {
+    background-position: 0% 0%;
+  }
+}
+
+.animated-button {
+  padding: 20px 50px;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  color: white;
+  background-color: #00b7ff;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 183, 255, 0.6);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  animation: float 3s ease-in-out infinite, colorPulse 6s infinite;
+}
+
+.animated-button:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 183, 255, 0.8);
+}
+
+.animated-button:active {
+  transform: translateY(0px) scale(0.95);
+  box-shadow: 0 5px 20px rgba(0, 183, 255, 0.5);
+}
+
+.animated-button span {
+  display: inline-block;
+  position: relative;
+  transition: transform 0.3s ease;
+  animation: textWave 2s ease-in-out infinite;
+}
+
+.animated-button:hover span {
+  transform: scale(1.1);
+}
+
+.animated-button::before,
+.animated-button::after {
+  content: "";
+  position: absolute;
+  width: 200%;
+  height: 200%;
+  top: -50%;
+  left: -50%;
+  background: linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc, #00b7ff);
+  z-index: 0;
+  transition: opacity 0.4s ease;
+  animation: rotateGradient 4s linear infinite, opacityPulse 5s infinite;
+}
+
+.upload_button {
+  position: fixed;
+  bottom: 1%;
+  left: 41%;
+}
+
+.animated-button::after {
+  z-index: -1;
+  filter: blur(30px);
+  opacity: 0.7;
+}
+
+.animated-button:hover::before {
+  opacity: 1;
+}
+
 .top {
   border: 1px solid black;
   color: white;
-  background: #007bff;
   font-weight: bold;
   font-size: 2rem;
   height: 5%;
@@ -14,6 +103,9 @@
   align-items: center;
   z-index: 500;
   padding: 1.5rem;
+  position: sticky;
+  width: 100%;
+  top: 0.01px;
 }
 
 a {
@@ -40,42 +132,30 @@ a:hover {
 
 .receive_button {
   position: absolute;
-  bottom: 1%;
+  bottom: 0%;
   right: 0%;
   opacity: 1;
   z-index: 20;
 }
 
-.upload_button {
-  position: absolute;
-  bottom: 1%;
-  left: 0%;
-}
-
 .edit_button1 {
   position: fixed;
   left: 0%;
-  bottom: 5%;
+  bottom: 1%;
   z-index: 100;
 }
 .edit_button2 {
   display: none;
 }
 
-.submit,
 .send_doc {
-  background-color: #007bff;
-  color: white;
   padding: 15px 30px;
   font-size: 18px;
   font-weight: bold;
-  border: 1px solid white;
   border-radius: 10px;
   outline: none;
   cursor: pointer;
   overflow: hidden;
-  transition: background-color 0.3s ease-in-out, color 0.3s ease-in-out;
-  box-shadow: 0 0 15px rgba(0, 123, 255, 0.5);
 }
 
 .modal_drag_drop {
@@ -153,7 +233,7 @@ a:hover {
 #document_button1 {
   display: block;
   position: absolute;
-  bottom: 1%;
+  bottom: 0%;
   left: 43%;
   width: 15%;
 }
@@ -167,6 +247,12 @@ a:hover {
 }
 
 @media (max-width: 780px) {
+  .blue-gradient-button span {
+    font-size: 1.2rem;
+  }
+  .blue-gradient-button2 span {
+    font-size: 1rem;
+  }
   .small_upload_pc {
     display: none;
   }
@@ -191,10 +277,11 @@ a:hover {
     display: none;
   }
   #document_button2 {
+    background: none;
     display: block;
-    position: absolute;
-    top: 195%;
-    left: 1%;
+    position: relative;
+    bottom: 0%;
+    left: 0%;
   }
   .right,
   .left {
@@ -204,16 +291,9 @@ a:hover {
     height: 50%;
   }
 
-  .submit {
-    z-index: 10;
-    right: 3%;
-    top: 91%;
-    position: fixed;
-  }
-
   .upload_button {
     position: fixed;
-    bottom: 1%;
+    bottom: 0%;
     left: auto;
   }
 
@@ -224,7 +304,7 @@ a:hover {
 
   .up_arrow,
   .down_arrow {
-    height: 20px;
+    height: 60px;
     aspect-ratio: 1/1;
   }
 
@@ -243,7 +323,7 @@ a:hover {
   }
 
   .upload_file {
-    height: 60px;
+    height: 80px;
     aspect-ratio: 1/1;
   }
 
@@ -311,7 +391,7 @@ a:hover {
 .pass_modal {
   display: none; /* Hidden by default */
   position: fixed; /* Stay in place */
-  z-index: 40; /* Sit on top */
+  z-index: 1000; /* Sit on top */
   left: 0;
   top: 0;
   width: 100%; /* Full width */
@@ -473,12 +553,6 @@ a:hover {
   position: fixed;
 }
 
-.upload_button_full_content {
-  position: absolute;
-  bottom: 5%;
-  left: 45%;
-}
-
 .credential_button {
   background: rgb(46, 157, 248);
   color: white;
@@ -490,12 +564,30 @@ a:hover {
   font-size: 1.5rem;
 }
 
-.credential_button:hover {
-  background: #024996;
+.blue-gradient-button {
+  padding: 6px 18px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
   color: white;
-  transition-duration: 0.5s;
+  background: linear-gradient(90deg, #007bff, #00b7ff, #00e5ff, #007bff);
+  border: 2px solid rgba(0, 183, 255, 0.7); /* Added border */
+  cursor: pointer;
+  background-size: 400%;
+  background-position: 0%;
+  border-radius: 10px;
 }
-
+.blue-gradient-button2 {
+  padding: 6px 18px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  color: white;
+  background: linear-gradient(90deg, #007bff, #00b7ff, #00e5ff, #007bff);
+  border: 2px solid rgba(0, 183, 255, 0.7); /* Added border */
+  cursor: pointer;
+  background-size: 400%;
+  background-position: 0%;
+  border-radius: 10px;
+}
 /*login form index page*/
 .login-modal-bg {
   position: fixed;
@@ -590,6 +682,29 @@ a:hover {
   .login-modal-container {
     padding: 15px;
     max-width: 90%;
+  }
+  .image_button {
+    border: none;
+    border: transparent;
+    border-radius: 20px;
+    background: white;
+  }
+  .image_button span {
+    background: white;
+    border: transparent;
+    border: none;
+    height: 9%;
+    aspect-ratio: 1/1;
+  }
+
+  .image_button2 {
+    border: none;
+    border: transparent;
+    border-radius: 20px;
+    position: absolute;
+    left: 40%;
+    bottom: 0%;
+    background: none;
   }
 }
 

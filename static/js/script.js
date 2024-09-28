@@ -45,7 +45,7 @@ if (html_width < 800) {
   });
 }
 
-let fixed_height = html_body.getBoundingClientRect().height - 300;
+let fixed_height = html_body.getBoundingClientRect().height - 175;
 
 const body_width = document.querySelector("body").getBoundingClientRect().width;
 
@@ -53,12 +53,17 @@ if (body_width < 400) {
   fixed_height = 555;
   upload_button.textContent = "";
   receive_button.textContent = "";
-  upload_button.innerHTML = `<img src="../static/images/upload_up_arrow.png" class ="up_arrow" alt="">`; //here
-  receive_button.innerHTML = `<img src="../static/images/receive_down_arrow.png" class ="down_arrow" alt="">`; //here
+  upload_button.innerHTML = `<span><img src="../static/images/upload_up_arrow.png" class ="up_arrow" alt=""> </span>`; //here
+  receive_button.innerHTML = `<span><img src="../static/images/receive_down_arrow.png" class ="down_arrow" alt=""></span>`; //here
+  upload_button.classList.remove("animated-button");
+  upload_button.classList.add("image_button");
+  receive_button.classList.remove("animated-button");
+  receive_button.classList.add("image_button");
   upload_document2.textContent = "";
   upload_document2.classList.remove("send_doc");
   upload_document2.classList.add("bg_transparent");
-  upload_document2.innerHTML = `<img src="../static/images/upload_file.png" class="upload_file">`; //here
+
+  upload_document2.innerHTML = `<span><img src="../static/images/upload_file.png" class="upload_file"></span>`; //here
 }
 
 document.addEventListener("DOMContentLoaded", function () {
