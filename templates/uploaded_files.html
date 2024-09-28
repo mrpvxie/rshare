@@ -15,10 +15,6 @@
   <body class="gradient-container">
     <div class="container">
       <div class="tbl_content">
-        <div class="search-container">
-          <input type="text" class="search_input" placeholder="Search..." />
-        </div>
-
         <table class="tbl">
           <thead>
             <tr>
@@ -70,7 +66,10 @@
                   class="btn_trash delete_button"
                   data-label="modal_no_{{ file.id }}"
                 >
-                  <i class="fa fa-trash"></i>
+                  <img
+                    src="../static/images/delete_icon.png"
+                    class="delete_button_img"
+                  />
                 </button>
                 {% if on_general_files_upload %}
                 <a href="{{url_for('download', file_id= file.id)}}">
@@ -96,19 +95,19 @@
             {% endfor %}
           </tbody>
         </table>
-        <a href="{{ url_for('back_button') }} "
-          ><img
-            src="../static/images/back_button.png"
-            class="back_button_image"
-        /></a>
-        <a href="{{ url_for('table_data') }} ">
-          <button type="submit" class="submit file_content_button">
-            CONTENT
-          </button></a
-        >
       </div>
     </div>
-
+    <div class="search-container">
+      <input type="text" class="search_input" placeholder="Search..." />
+    </div>
+    <a href="{{ url_for('back_button') }} "
+      ><img src="../static/images/back_button.png" class="back_button_image"
+    /></a>
+    <a href="{{ url_for('table_data') }} ">
+      <button type="submit" class="submit file_content_button">
+        CONTENT
+      </button></a
+    >
     <script>
       const table_row_container = document.querySelector(".table_body");
 
@@ -182,7 +181,10 @@
                       </td>
                       <td id="deleteBtn${currentItem.id}" class="table_delete">
                           <button class="btn_trash delete_button" data-label="modal_no_${currentItem.id}">
-                              <i class="fa fa-trash"></i>
+                              <img
+                                src="../static/images/delete_icon.png"
+                                class="delete_button_img"
+                              />
                           </button>
                           <a href="/download/${currentItem.id}">
                             <button class="small_upload_button">

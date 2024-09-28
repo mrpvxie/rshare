@@ -3,177 +3,249 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Animated Modal</title>
+    <title>Glassmorphism Responsive Table</title>
     <style>
       * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
-        font-family: "Arial", sans-serif;
+        font-family: Arial, sans-serif;
       }
 
       body {
+        background-color: #f4f4f4;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        background-color: #222;
+        min-height: 100vh;
+        background: linear-gradient(135deg, #74ebd5, #9face6);
       }
 
-      .open-modal-button {
-        padding: 15px 30px;
-        background-color: #00b7ff;
-        border: none;
-        border-radius: 30px;
-        font-size: 18px;
-        font-weight: bold;
+      .table-container {
+        margin: 20px;
+        padding: 20px;
+        overflow-x: auto;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        transition: transform 0.3s ease;
+      }
+
+      .table-container:hover {
+        transform: scale(1.02);
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        transition: background-color 0.3s ease, color 0.3s ease;
+        background: rgba(255, 255, 255, 0.25);
+      }
+
+      thead {
+        background-color: rgba(0, 123, 255, 0.85);
         color: white;
-        cursor: pointer;
-        transition: background 0.3s ease, transform 0.3s ease;
       }
 
-      .open-modal-button:hover {
-        background-color: #007bff;
-        transform: translateY(-5px);
+      tbody tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.15);
       }
 
-      .modal-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
-        background-color: rgba(0, 0, 0, 0.8);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        visibility: hidden;
-        opacity: 0;
-        transition: visibility 0s, opacity 0.3s;
-        z-index: 1000;
+      tbody tr {
+        transition: all 0.3s ease;
       }
 
-      .modal-content {
-        position: relative;
-        width: 400px;
-        padding: 30px;
-        background-color: white;
-        border-radius: 15px;
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        animation: modalAppear 0.7s ease forwards,
-          modalFloating 4s ease-in-out infinite;
-        transform: translateY(50px);
-        opacity: 0;
+      tbody tr:hover {
+        transform: translateX(10px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
       }
 
-      @keyframes modalAppear {
-        0% {
-          opacity: 0;
-          transform: scale(0.8) translateY(50px);
-        }
-        100% {
-          opacity: 1;
-          transform: scale(1) translateY(0);
-        }
+      th {
+        font-size: 1.2em;
+        text-transform: uppercase;
+        letter-spacing: 1px;
       }
 
-      @keyframes modalFloating {
-        0%,
-        100% {
-          transform: translateY(0);
-        }
-        50% {
-          transform: translateY(-10px);
-        }
-      }
-
-      .modal-content h2 {
-        font-size: 24px;
-        margin-bottom: 20px;
-        text-align: center;
-      }
-
-      .modal-content p {
-        font-size: 16px;
-        color: #555;
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .close-modal-button {
-        padding: 10px 25px;
-        background-color: #ff6b6b;
-        border: none;
-        border-radius: 30px;
-        font-size: 16px;
-        color: white;
-        cursor: pointer;
-        display: block;
-        margin: 0 auto;
-        transition: background 0.3s ease;
-      }
-
-      .close-modal-button:hover {
-        background-color: #ff5252;
-      }
-
-      .modal-close {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        font-size: 18px;
+      td {
+        font-size: 1em;
         color: #333;
-        cursor: pointer;
-        transition: color 0.3s ease;
       }
 
-      .modal-close:hover {
-        color: #ff5252;
+      /* Responsive Design for smaller screens */
+      @media screen and (max-width: 768px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+
+        thead {
+          display: none;
+        }
+
+        tr {
+          margin-bottom: 20px;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 10px;
+          padding: 10px;
+          background: rgba(255, 255, 255, 0.1);
+        }
+
+        td {
+          display: flex;
+          justify-content: space-between;
+          padding: 10px;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        td:last-child {
+          border-bottom: none;
+        }
+
+        td::before {
+          content: attr(data-label);
+          font-weight: bold;
+          color: #007bff;
+        }
       }
 
-      /* Show modal when active */
-      .modal-overlay.active {
-        visibility: visible;
-        opacity: 1;
+      @media screen and (max-width: 480px) {
+        td {
+          padding: 8px;
+          font-size: 0.9em;
+        }
+
+        td::before {
+          font-size: 0.9em;
+        }
+      }
+
+      .table123 {
+        max-width: 95%;
       }
     </style>
   </head>
   <body>
-    <button class="open-modal-button">Open Modal</button>
-
-    <div class="modal-overlay" id="modal-overlay">
-      <div class="modal-content">
-        <span class="modal-close" id="close-icon">&times;</span>
-        <h2>Beautiful Animated Modal</h2>
-        <p>This is an example of a very animated and attractive modal.</p>
-        <button class="close-modal-button" id="close-button">Close</button>
-      </div>
-    </div>
-
-    <script>
-      const openModalButton = document.querySelector(".open-modal-button");
-      const modalOverlay = document.getElementById("modal-overlay");
-      const closeModalButton = document.getElementById("close-button");
-      const closeIcon = document.getElementById("close-icon");
-
-      openModalButton.addEventListener("click", () => {
-        modalOverlay.classList.add("active");
-      });
-
-      closeModalButton.addEventListener("click", () => {
-        modalOverlay.classList.remove("active");
-      });
-
-      closeIcon.addEventListener("click", () => {
-        modalOverlay.classList.remove("active");
-      });
-
-      // Close the modal when clicking outside of it
-      modalOverlay.addEventListener("click", (e) => {
-        if (e.target === modalOverlay) {
-          modalOverlay.classList.remove("active");
-        }
-      });
-    </script>
+    <table class="table123">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Age</th>
+          <th>Email</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td data-label="Name">John Doe</td>
+          <td data-label="Age">29</td>
+          <td data-label="Email">johndoe@example.com</td>
+          <td data-label="Location">New York</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Jane Smith</td>
+          <td data-label="Age">34</td>
+          <td data-label="Email">janesmith@example.com</td>
+          <td data-label="Location">London</td>
+        </tr>
+        <tr>
+          <td data-label="Name">David Brown</td>
+          <td data-label="Age">23</td>
+          <td data-label="Email">davidbrown@example.com</td>
+          <td data-label="Location">Paris</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+        <tr>
+          <td data-label="Name">Emily White</td>
+          <td data-label="Age">27</td>
+          <td data-label="Email">emilywhite@example.com</td>
+          <td data-label="Location">Berlin</td>
+        </tr>
+      </tbody>
+    </table>
   </body>
 </html>

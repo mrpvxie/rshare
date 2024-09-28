@@ -82,6 +82,12 @@
   left: 41%;
 }
 
+.upload_button_index {
+  position: fixed;
+  bottom: 0%;
+  left: 0%;
+}
+
 .animated-button::after {
   z-index: -1;
   filter: blur(30px);
@@ -131,7 +137,7 @@ a:hover {
 }
 
 .receive_button {
-  position: absolute;
+  position: fixed;
   bottom: 0%;
   right: 0%;
   opacity: 1;
@@ -371,6 +377,12 @@ a:hover {
   .save_change_button {
     height: 20px;
     aspect-ratio: 1/1;
+  }
+  .upload_button_index {
+    position: fixed;
+    bottom: 0%;
+    right: 0%;
+    left: auto;
   }
 }
 

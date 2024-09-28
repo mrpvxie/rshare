@@ -14,7 +14,7 @@ open_modal_button.addEventListener("click", () => {
   console.log(modal);
 });
 
-const upload_button = document.querySelector(".upload_button");
+const upload_button = document.querySelector(".upload_button_index");
 const receive_button = document.querySelector(".receive_button");
 const upload_document2 = document.querySelector("#document_button2");
 

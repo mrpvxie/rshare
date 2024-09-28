@@ -67,14 +67,14 @@
     <div class="all_container">
       <form class="right" method="POST" action="{{ url_for('upload') }}">
         <textarea id="summernote1" name="summernote1"></textarea>
-        <button type="submit" class="submit upload_button animated-button">
+        <button type="submit" class="upload_button_index animated-button">
           <span>UPLOAD</span>
         </button>
       </form>
 
       <form class="left" method="POST" action="{{url_for('receive')}}">
         <textarea id="summernote2" name="summernote2"></textarea>
-        <button type="submit" class="submit receive_button animated-button">
+        <button type="submit" class="receive_button animated-button">
           <span>RECEIVE</span>
         </button>
       </form>
