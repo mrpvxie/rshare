@@ -13,89 +13,89 @@
     <link rel="stylesheet" href="../static/css/table_styles.css" />
   </head>
   <body class="gradient-container">
-    <div class="container">
-      <div class="tbl_content">
-        <table class="tbl">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>FILE NAME</th>
-              <th>DATE</th>
-              <th>SIZE</th>
-              <th>ACTION</th>
-            </tr>
-          </thead>
-          <tbody class="table_body">
-            {% for file in file_list %}
-            <tr>
-              <div
-                id="modal_no_{{ file.id }}"
-                class="modal"
-                style="display: none"
-              >
-                <div class="modal-content">
-                  <span class="close">&times;</span>
-                  <p>Are you sure you want to delete this item?</p>
-                  <div class="modal-buttons">
-                    <a href="{{url_for('delete_file', file_id= file.id)}}">
-                      <button class="btn-yes">Yes</button>
-                    </a>
-                    <button class="btn-no">No</button>
-                  </div>
+    <div class="tbl_content">
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>FILE NAME</th>
+            <th>DATE</th>
+            <th>SIZE</th>
+            <th>ACTION</th>
+          </tr>
+        </thead>
+        <tbody class="table_body">
+          {% for file in file_list %}
+          <tr>
+            <div
+              id="modal_no_{{ file.id }}"
+              class="modal"
+              style="display: none"
+            >
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <p>
+                  Are you sure you want to delete this item? "{{ file.name }}"
+                </p>
+                <div class="modal-buttons">
+                  <a href="{{url_for('delete_file', file_id= file.id)}}">
+                    <button class="btn-yes">Yes</button>
+                  </a>
+                  <button class="btn-no">No</button>
                 </div>
               </div>
-              <td data-label="id" class="table_id">
-                <span class="content_text">{{ file.id }}</span>
-              </td>
+            </div>
+            <td data-label="id" class="table_id">
+              <span class="content_text">{{ file.id }}</span>
+            </td>
 
-              <td data-label="file_name" class="content_column table_content">
-                <a href="#"
-                  ><br /><span class="content_text">{{ file.name }}</span></a
-                >
-              </td>
-              <td data-label="date" class="table_time">
-                <span class="content_text"><br />{{ file.time }}</span>
-              </td>
+            <td data-label="file_name" class="content_column table_content">
+              <a href="#"
+                ><br /><span class="content_text">{{ file.name }}</span></a
+              >
+            </td>
+            <td data-label="date" class="table_time">
+              <span class="content_text"><br />{{ file.time }}</span>
+            </td>
 
-              <td data-label="size" class="table_size">
-                <span class="content_text"><br />{{ file.size }} MB</span>
-              </td>
+            <td data-label="size" class="table_size">
+              <span class="content_text"><br />{{ file.size }} MB</span>
+            </td>
 
-              <td id="deleteBtn{{ file.id }}" class="table_delete">
-                <button
-                  class="btn_trash delete_button"
-                  data-label="modal_no_{{ file.id }}"
-                >
+            <td id="deleteBtn{{ file.id }}" class="table_delete">
+              <button
+                class="btn_trash delete_button"
+                data-label="modal_no_{{ file.id }}"
+              >
+                <img
+                  src="../static/images/delete_icon.png"
+                  class="delete_button_img"
+                />
+              </button>
+              {% if on_general_files_upload %}
+              <a href="{{url_for('download', file_id= file.id)}}">
+                <button class="small_upload_button">
                   <img
-                    src="../static/images/delete_icon.png"
-                    class="delete_button_img"
+                    src="../static/images/download.png"
+                    id="table_upload_image"
                   />
                 </button>
-                {% if on_general_files_upload %}
-                <a href="{{url_for('download', file_id= file.id)}}">
-                  <button class="small_upload_button">
-                    <img
-                      src="../static/images/download.png"
-                      id="table_upload_image"
-                    />
-                  </button>
-                </a>
-                {% else %}
-                <a href="{{url_for('user_download', file_id= file.id)}}">
-                  <button class="small_upload_button">
-                    <img
-                      src="../static/images/download.png"
-                      id="table_upload_image"
-                    />
-                  </button>
-                </a>
-                {% endif %}
-              </td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+              </a>
+              {% else %}
+              <a href="{{url_for('user_download', file_id= file.id)}}">
+                <button class="small_upload_button">
+                  <img
+                    src="../static/images/download.png"
+                    id="table_upload_image"
+                  />
+                </button>
+              </a>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
     </div>
     <div class="search-container">
       <input type="text" class="search_input" placeholder="Search..." />
@@ -159,7 +159,7 @@
                         <div id="modal_no_${currentItem.id}" class="modal" style="display:none">
                             <div class="modal-content">
                                 <span class="close">&times;</span>
-                                <p>Are you sure you want to delete this item?</p>
+                                <p>Are you sure you want to delete this item? "${currentItem.file_name}"</p>
                                 <div class="modal-buttons">
                                     <a href="/delete_fi/${currentItem.id}">
                                         <button class="btn-yes">Yes</button>

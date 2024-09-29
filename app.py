@@ -346,7 +346,7 @@ def small_upload(content_id):
     database.session.delete(chosen_content)
     database.session.commit()
     if small_upload_button_page == "table_data":
-        content_data = Content.query.all()
+        content_data =database.session.execute(database.select(Content).where(Content.user_id == 0)).scalars().all()
         json_data = [
             {
                 'id': content.id,
@@ -355,6 +355,35 @@ def small_upload(content_id):
             } for content in content_data
         ]
         return render_template("table_data.html", data = json_data)
+    
+    return render_template("full_content.html",content_data = chosen_content)
+
+
+@app.route("/user_small_upload/<int:content_id>",methods = ['POST','GET'])
+def user_small_upload(content_id): #111
+    global small_upload_button_page,current_user
+    
+    print("--------------user_small_upload route is running---------")
+    chosen_content = database.session.execute(database.select(Content).where(Content.id == content_id)).scalar()
+    
+    new_content = Content( 
+    content = chosen_content.content,
+    time = chosen_content.time,
+    user_id = 0
+    )
+    database.session.add(new_content)
+    database.session.commit()
+    if small_upload_button_page == "my_profile":
+        print("this is here")
+        content_data = database.session.execute(database.select(Content).where(Content.user_id == current_user.id)).scalars().all()
+        json_data = [
+            {
+                'id': content.id,
+                'content': remove_tags(content.content),
+                'time': content.time  
+            } for content in content_data
+        ]
+        return render_template("user_data.html", table_contents = json_data)
     
     return render_template("full_content.html",content_data = chosen_content)
 
@@ -405,11 +434,12 @@ def login():
 
 
 @app.route('/my_profile')
-def my_profile():
+def my_profile(): #222
     print("--------------my_profile route is running---------")
-    global current_user,current_page,user_content_page
+    global current_user,current_page,user_content_page,small_upload_button_page
     current_page = "index"
     user_content_page = "my_profile"
+    small_upload_button_page = "my_profile"
     table_contents = database.session.execute(database.select(Content).where(Content.user_id == current_user.id)).scalars().all()
     json_data = [
         {
@@ -601,7 +631,7 @@ def change_password():
     return render_template('index.html')
 
 @app.route('/admin_access')
-@admin_only #111
+@admin_only 
 def admin_access(): 
     print("--------------admin_access route is running---------")
     # user_data

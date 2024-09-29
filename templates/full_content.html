@@ -22,10 +22,10 @@
       <form class="full_content_form" method="POST" action="{{url_for('edit_content',content_id=content_data.id)}}">
         <textarea id="summernote2" name="summernote2"></textarea>
         <button type="submit" class="submit edit_button1 animated-button"><span>SAVE CHANGES</span></button>
-        <button type="submit" class="submit edit_button2 animated-button"><span > <img src="../static/images/save.png" class ="save_change_button" ></span></button>
+        <button type="submit" class="submit edit_button2"><span > <img src="../static/images/save.png" class ="save_change_button" ></span></button>
       </form>
     </div>
-      <a href="{{url_for('small_upload', content_id= content_data.id)}}" class = "small_upload_pc">
+      <a href="{{url_for('user_small_upload', content_id= content_data.id)}}" class = "small_upload_pc">
             <button class="submit animated-button upload_button"><span>UPLOAD</span></button>
       </a>
 
