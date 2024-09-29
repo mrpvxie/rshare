@@ -1,5 +1,0 @@
-1. back
-2. upload
-3. send document mobile
-4. small upload button for table
-5. receive button for mobile
