@@ -232,7 +232,7 @@ def upload():
 @app.route("/receive",methods = ['POST','GET'])
 def receive():
     print("--------------receive route is running---------")
-    content_object = database.session.execute(database.select(Content)).scalars().all()[-1]
+    content_object =database.session.execute(database.select(Content).where(Content.user_id == 0)).scalars().all()[-1]
     return render_template("index.html",render_content = content_object.content)
 
 
