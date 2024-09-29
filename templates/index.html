@@ -351,10 +351,9 @@
         if (password_input.value == "rahul123") {
           toggle_password.textContent = "";
           modal_button_container.innerHTML = `
-      <a href="{{ url_for('check_for_admin') }} "
-              ><button class="btn-continue">Continue</button>
-            </a>
-      `;
+            <a href="{{ url_for('check_for_admin') }} ">
+              <button class="btn-continue">Continue</button>
+            </a>`;
         } else {
           modal_button_container.innerHTML = " ";
           toggle_password.textContent = "🙈";
