@@ -15,10 +15,7 @@
   <body>
     <div class="container">
       <div class="tbl_content">
-        <div class="search-container">
-          <input type="text" class="search_input" placeholder="Search..." />
-        </div>
-
+        
           <table class="tbl">
             <thead>
               <tr>
@@ -61,13 +58,16 @@
             </tbody>
           </table>
 
-          <!-- Back Button -->
+        
+      </div>
+    </div>
+        <div class="search-container">
+          <input type="text" class="search_input" placeholder="Search..." />
+        </div>
+        <!-- Back Button -->
         <a href="{{ url_for('back_button') }}">
           <img src="../static/images/back_button.png" class="back_button_image" />
         </a>
-      </div>
-    </div>
-
     <script>
       const table_row_container = document.querySelector(".table_body");
       let content_data = [];
