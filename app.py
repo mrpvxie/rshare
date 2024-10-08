@@ -405,6 +405,7 @@ def register():
         )
         database.session.add(new_user)
         database.session.commit()
+        session['username'] = request.form.get("username").lower()
         login_user(new_user)
         current_user = new_user
         return render_template('index.html')
