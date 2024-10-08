@@ -7,3 +7,4 @@ SQLAlchemy
 gunicorn
 psycopg2-binary
 flask_login
+flask-session

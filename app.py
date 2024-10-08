@@ -1,6 +1,6 @@
-from flask import Flask, render_template,request,url_for,redirect,jsonify,send_file
+from flask import Flask, render_template,request,url_for,redirect,jsonify,send_file,session
 from flask_login import LoginManager,UserMixin,login_user,logout_user
-
+from flask_session import Session
 from werkzeug.security import generate_password_hash, check_password_hash
 
 from flask_sqlalchemy import SQLAlchemy
@@ -27,6 +27,7 @@ choose_password = 0
 wrong_otp = 0
 user_content_page = None
 on_general_files_upload = 0
+
 #1FUNCTIONS
 def send_mail(receiver,body,sender = "killbusyness@gmail.com"):
     server = smtplib.SMTP("smtp.gmail.com", 587)
@@ -87,19 +88,18 @@ def get_file(file_id,file_list):
         if file.id == file_id:
             return file.name
         
-
-
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///data.db"
-app.config['SECRET_KEY'] = "rahulsharma122703"
-app.config.update(
-    SECRET_KEY='rahulsharma122703',
-    SESSION_COOKIE_SECURE=True,
-    SESSION_COOKIE_HTTPONLY=True
-) 
+app.config['SECRET_KEY'] = "rahulsharma"
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads') 
 
+app.config['SESSION_TYPE'] = 'filesystem'  # Use the filesystem for session storage
+app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'flask_session')  # Directory where sessions will be stored
+app.config['SESSION_PERMANENT'] = False  # Session will not be permanent
+app.config['SESSION_USE_SIGNER'] = True  # Sign the session ID cookie
+
+Session(app)
 # Ensure the upload directory exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -423,6 +423,7 @@ def login():
         else:
             chosen_username = database.session.execute(database.select(User).filter(User.username == username_input_data)).scalar()
         if check_password_hash(chosen_username.password, password_input_data):
+            session['username'] = chosen_username.username
             login_user(chosen_username)
         else:
             forgot_password_email_username = username_input_data
@@ -456,6 +457,7 @@ def logout():
     print("--------------logout route is running---------")
     global current_user
     current_user = None
+    session.pop('username',None)
     logout_user()
     return redirect(url_for('index'))
 
@@ -704,4 +706,4 @@ def admin_access():
 #      return "<h1>DATA INSERTED SUCCESSFULLY</H1>"
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True,host = '192.168.147.176')
